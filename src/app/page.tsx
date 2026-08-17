@@ -173,12 +173,7 @@ export default function Home() {
             {upcoming.map((e) => (
               <div key={e.slug} className="mb-5 border-l-2 border-[var(--signal)] pl-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ink-dim)]">
-                  {e.date
-                    ? new Date(e.date + "T00:00:00").toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                      })
-                    : "Dates coming"}{" "}
+                  {e.dateLabel || (e.date ? new Date(e.date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) : "Dates coming")}{" "}
                   · {KIND_LABELS[e.kind]}
                 </p>
                 <p className="display mt-1 text-2xl">{e.title}</p>

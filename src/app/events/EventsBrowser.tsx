@@ -95,12 +95,7 @@ export default function EventsBrowser() {
                     {e.state} · {KIND_LABELS[e.kind]}
                     {e.upcoming && (
                       <span className="ml-2 rounded-full bg-[var(--signal)] px-2 py-0.5 text-[10px] font-bold text-white">
-                        {e.date
-                          ? new Date(e.date + "T00:00:00").toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
-                          : "Coming"}
+                        {e.dateLabel || (e.date ? new Date(e.date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Coming")}
                       </span>
                     )}
                   </p>

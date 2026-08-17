@@ -10,7 +10,8 @@ export interface CgcEvent {
   blurb: string;
   vimeoIds?: string[];
   upcoming?: boolean;
-  date?: string; // ISO when known
+  date?: string; // ISO start date when known
+  dateLabel?: string; // human display, e.g. "Sept 4\u20135"
 }
 
 export const KIND_LABELS: Record<EventKind, string> = {
@@ -42,8 +43,46 @@ export const EVENTS: CgcEvent[] = [
     state: "GA",
     kind: "us250",
     topic: "US250 Tailgate Tour",
-    blurb: "The US250 tour comes to North Georgia. Dates announced soon.",
+    blurb: "The US250 Tailgate Tour comes to North Georgia.",
     upcoming: true,
+    date: "2026-09-26",
+    dateLabel: "Sept 26",
+  },
+  {
+    slug: "indiana-wesleyan",
+    title: "Indiana Wesleyan University",
+    campus: "Indiana Wesleyan University",
+    state: "IN",
+    kind: "us250",
+    topic: "US250 Tailgate Tour",
+    blurb: "The US250 Tailgate Tour stops in Marion, Indiana.",
+    upcoming: true,
+    date: "2026-09-04",
+    dateLabel: "Sept 4\u20135",
+  },
+  {
+    slug: "south-fork-ranch",
+    title: "South Fork Ranch",
+    campus: "South Fork Ranch Event Center, Dallas TX",
+    state: "TX",
+    kind: "us250",
+    topic: "US250 Tailgate Tour",
+    blurb: "A US250 Tailgate Tour event at the South Fork Ranch Event Center.",
+    upcoming: true,
+    date: "2026-09-17",
+    dateLabel: "Sept 17\u201318",
+  },
+  {
+    slug: "south-university-wpb",
+    title: "South University, West Palm Beach",
+    campus: "South University, West Palm Beach FL",
+    state: "FL",
+    kind: "us250",
+    topic: "US250 Tailgate Tour",
+    blurb: "The US250 Tailgate Tour arrives in West Palm Beach.",
+    upcoming: true,
+    date: "2026-10-10",
+    dateLabel: "Oct 10",
   },
   {
     slug: "ug",
@@ -175,6 +214,19 @@ export const EVENTS: CgcEvent[] = [
     kind: "us250",
     topic: "US250 Tailgate Tour",
     blurb: "The US250 Tailgate Tour at the Alamo.",
+    date: "2026-05-01",
+    dateLabel: "May 1\u20132",
+  },
+  {
+    slug: "columbus-state",
+    title: "Columbus State University",
+    campus: "Columbus State University, GA",
+    state: "GA",
+    kind: "us250",
+    topic: "US250 Tailgate Tour",
+    blurb: "The US250 Tailgate Tour near Columbus State.",
+    date: "2026-04-23",
+    dateLabel: "April 23\u201324",
   },
   {
     slug: "utah-state",
@@ -184,24 +236,30 @@ export const EVENTS: CgcEvent[] = [
     kind: "us250",
     topic: "US250 Tailgate Tour",
     blurb: "US250 Tailgate Tour stop at Utah State.",
+    date: "2026-07-10",
+    dateLabel: "July 10\u201311",
   },
   {
     slug: "cal-state",
     title: "Cal State",
-    campus: "Cal State",
+    campus: "Cal State \u2014 amphitheater & Riverwalk",
     state: "CA",
     kind: "us250",
     topic: "US250 Tailgate Tour",
-    blurb: "US250 Tailgate Tour stop at Cal State.",
+    blurb: "US250 Tailgate Tour at the amphitheater and Riverwalk near Cal State.",
+    date: "2026-07-02",
+    dateLabel: "July 2\u20133",
   },
   {
     slug: "cattle-creek",
     title: "Cattle Creek Farm",
-    campus: "Cattle Creek Farm, OH",
+    campus: "Cattle Creek Farm, Bryan OH",
     state: "OH",
     kind: "us250",
     topic: "US250 Tailgate Tour",
-    blurb: "US250 Tailgate Tour at Cattle Creek Farm.",
+    blurb: "US250 Tailgate Tour at Cattle Creek Farm in Bryan, Ohio.",
+    date: "2026-07-23",
+    dateLabel: "July 23\u201325",
   },
 ];
 
