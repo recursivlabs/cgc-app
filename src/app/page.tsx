@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, eventStates } from "@/lib/events";
+import { EVENTS, KIND_LABELS, eventStates } from "@/lib/events";
 
 const PROGRAMS = [
   {
@@ -28,14 +28,12 @@ export default function Home() {
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative flex min-h-[92svh] items-end overflow-hidden">
-        <div className="hero-video" aria-hidden="true">
-          <iframe
-            src={`https://player.vimeo.com/video/${HERO_VIMEO_ID}?background=1&autoplay=1&loop=1&muted=1`}
-            allow="autoplay; fullscreen"
-            title=""
-            tabIndex={-1}
-          />
-        </div>
+        <div
+          className="hero-img"
+          style={{ backgroundImage: "url(/events/hero.jpg)" }}
+          role="img"
+          aria-label="Students in dialogue on stage at a Common Ground Campus event"
+        />
         <div className="hero-scrim" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-40">
@@ -132,13 +130,13 @@ export default function Home() {
           {featured.map((e) => (
             <Link key={e.slug} href={`/events#${e.slug}`} className="card group overflow-hidden">
               <div className="relative aspect-video overflow-hidden bg-[var(--panel-2)]">
-                <iframe
-                  src={`https://player.vimeo.com/video/${e.vimeoIds![0]}?title=0&byline=0&portrait=0`}
-                  className="absolute inset-0 h-full w-full"
-                  allow="fullscreen"
-                  title={e.title}
+                <img
+                  src={e.image!}
+                  alt={e.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
+                <span className="play-badge"><i aria-hidden="true" /></span>
               </div>
               <div className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--amber)]">

@@ -12,6 +12,7 @@ export interface CgcEvent {
   upcoming?: boolean;
   date?: string; // ISO start date when known
   dateLabel?: string; // human display, e.g. "Sept 4\u20135"
+  image?: string; // /events/<slug>.jpg in /public
 }
 
 export const KIND_LABELS: Record<EventKind, string> = {
@@ -86,6 +87,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "ug",
+    image: "/events/ug.jpg",
     title: "University of Georgia",
     campus: "University of Georgia",
     state: "GA",
@@ -97,6 +99,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "uh",
+    image: "/events/uh.jpg",
     title: "University of Houston",
     campus: "University of Houston",
     state: "TX",
@@ -108,6 +111,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "wvu",
+    image: "/events/wvu.jpg",
     title: "West Virginia University",
     campus: "West Virginia University",
     state: "WV",
@@ -119,6 +123,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "mhs",
+    image: "/events/mhs.jpg",
     title: "Medinah High School",
     campus: "Medinah High School",
     state: "OH",
@@ -130,6 +135,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "hope-college",
+    image: "/events/hope-college.jpg",
     title: "Hope College",
     campus: "Hope College",
     state: "MI",
@@ -140,6 +146,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "txb",
+    image: "/events/txb.jpg",
     title: "Texas Border Cleanup",
     campus: "Brownsville, TX",
     state: "TX",
@@ -150,6 +157,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "upenn-cinema",
+    image: "/events/upenn-cinema.jpg",
     title: "UPenn Pop-Up Cinema",
     campus: "University of Pennsylvania",
     state: "PA",
@@ -160,6 +168,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "rollins",
+    image: "/events/rollins.jpg",
     title: "Rollins College",
     campus: "Rollins College",
     state: "FL",
@@ -170,6 +179,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cole-valley-cinema",
+    image: "/events/cole-valley-cinema.jpg",
     title: "Cole Valley Pop-Up Cinema",
     campus: "Cole Valley Christian Schools",
     state: "ID",
@@ -179,6 +189,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "chicago-cleanup",
+    image: "/events/chicago-cleanup.jpg",
     title: "Loyola Beach Cleanup",
     campus: "Northwestern U & Loyola U Chicago",
     state: "IL",
@@ -199,6 +210,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "mt-rushmore",
+    image: "/events/mt-rushmore.jpg",
     title: "Mt. Rushmore: Raising Old Glory",
     campus: "Mount Rushmore, SD",
     state: "SD",

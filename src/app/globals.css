@@ -136,22 +136,61 @@ body {
   animation: marquee 36s linear infinite;
 }
 
-/* Hero video treatment */
-.hero-video {
+/* Hero image treatment — slow push-in, no third-party iframe */
+.hero-img {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  background-size: cover;
+  background-position: center 30%;
+  animation: kenburns 24s ease-out both;
 }
-.hero-video iframe {
+@keyframes kenburns {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-img { animation: none; }
+}
+
+/* Event card media */
+.play-badge {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 177.78vh; /* 16:9 cover */
-  min-width: 100vw;
-  height: 56.25vw;
-  min-height: 100vh;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 12, 0.25);
+  transition: background 0.15s ease;
+}
+.play-badge i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--signal);
+  color: #fff;
+  font-size: 0; /* triangle via border */
+}
+.play-badge i::after {
+  content: "";
+  border-style: solid;
+  border-width: 9px 0 9px 15px;
+  border-color: transparent transparent transparent #fff;
+  margin-left: 4px;
+}
+button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  background:
+    radial-gradient(rgba(245,244,240,0.055) 1px, transparent 1px) 0 0 / 18px 18px,
+    var(--panel-2);
 }
 .hero-scrim {
   position: absolute;

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { EVENTS, KIND_LABELS, eventStates, type EventKind } from "@/lib/events";
+import EventMedia from "@/components/EventMedia";
 
 const KINDS = Object.keys(KIND_LABELS) as EventKind[];
 
@@ -75,21 +76,7 @@ export default function EventsBrowser() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {shown.map((e) => (
               <article key={e.slug} id={e.slug} className="card flex flex-col overflow-hidden">
-                {e.vimeoIds?.length ? (
-                  <div className="relative aspect-video bg-[var(--panel-2)]">
-                    <iframe
-                      src={`https://player.vimeo.com/video/${e.vimeoIds[0]}?title=0&byline=0&portrait=0`}
-                      className="absolute inset-0 h-full w-full"
-                      allow="fullscreen"
-                      title={e.title}
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex aspect-video items-center justify-center bg-[var(--panel-2)]">
-                    <span className="display text-5xl text-[var(--ink-faint)]">{e.state}</span>
-                  </div>
-                )}
+                <EventMedia event={e} />
                 <div className="flex flex-1 flex-col p-6">
                   <p className="text-xs font-semibold uppercase tracking-widest text-[var(--amber)]">
                     {e.state} · {KIND_LABELS[e.kind]}
