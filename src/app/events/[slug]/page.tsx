@@ -83,7 +83,7 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
         <div className="flex flex-wrap items-center gap-3">
           <span className="eyebrow">{KIND_LABELS[e.kind]}</span>
           {e.upcoming ? (
-            <span className="rounded-full bg-[var(--signal)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+            <span className="rounded-full bg-[var(--signal)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#141413]">
               Upcoming
             </span>
           ) : (

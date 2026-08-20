@@ -51,10 +51,10 @@ export default function Home() {
             <br />
             over <span className="text-[var(--signal)]">division</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--ink-dim)]">
+          <p className="hero-sub mt-6 max-w-xl text-lg leading-relaxed">
             We help campuses and communities host events where people talk{" "}
-            <em className="not-italic font-semibold text-[var(--ink)]">with</em> each
-            other, not past each other.
+            <em className="not-italic font-bold">with</em> each other, not past
+            each other.
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link href="/get-involved#host" className="btn btn-signal">
@@ -204,13 +204,19 @@ export default function Home() {
           <div>
             <p className="eyebrow mb-5">What&apos;s next</p>
             {upcoming.map((e) => (
-              <div key={e.slug} className="mb-5 border-l-2 border-[var(--signal)] pl-5">
+              <Link
+                key={e.slug}
+                href={`/events/${e.slug}`}
+                className="group mb-5 block border-l-2 border-[var(--signal)] pl-5"
+              >
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ink-dim)]">
                   {e.dateLabel || (e.date ? new Date(e.date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) : "Dates coming")}{" "}
                   · {KIND_LABELS[e.kind]}
                 </p>
-                <p className="display mt-1 text-2xl">{e.title}</p>
-              </div>
+                <p className="display mt-1 text-2xl transition-colors group-hover:text-[var(--signal)]">
+                  {e.title} <span className="text-[var(--ink-faint)] transition-colors group-hover:text-[var(--signal)]">→</span>
+                </p>
+              </Link>
             ))}
           </div>
           <div className="card p-10">

@@ -9,8 +9,8 @@
   --ink: #f5f4f0;
   --ink-dim: #a5a3a0;
   --ink-faint: #6e6c68;
-  --signal: #ff4d2e;
-  --signal-deep: #d63a1f;
+  --signal: #f2a31b;
+  --signal-deep: #d68e0f;
   --amber: #ffb255;
   --line: rgba(245, 244, 240, 0.12);
   --line-strong: rgba(245, 244, 240, 0.24);
@@ -35,7 +35,7 @@ body {
 
 ::selection {
   background: var(--signal);
-  color: var(--ground);
+  color: #141413;
 }
 
 /* Poster display type */
@@ -74,7 +74,7 @@ body {
 }
 .btn-signal {
   background: var(--signal);
-  color: #fff;
+  color: #141413;
 }
 .btn-signal:hover {
   background: var(--signal-deep);
@@ -129,8 +129,8 @@ body {
   width: 44px;
   height: 44px;
   flex: none;
-  border: 1px solid rgba(255, 77, 46, 0.35);
-  background: rgba(255, 77, 46, 0.08);
+  border: 1px solid rgba(242, 163, 27, 0.4);
+  background: rgba(242, 163, 27, 0.10);
   color: var(--signal);
 }
 .pennant {
@@ -184,14 +184,14 @@ body {
   height: 52px;
   border-radius: 50%;
   background: var(--signal);
-  color: #fff;
+  color: #141413;
   font-size: 0; /* triangle via border */
 }
 .play-badge i::after {
   content: "";
   border-style: solid;
   border-width: 9px 0 9px 15px;
-  border-color: transparent transparent transparent #fff;
+  border-color: transparent transparent transparent #141413;
   margin-left: 4px;
 }
 button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
@@ -205,6 +205,10 @@ button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
   background:
     radial-gradient(rgba(245,244,240,0.055) 1px, transparent 1px) 0 0 / 18px 18px,
     var(--panel-2);
+}
+.hero-sub {
+  color: #e8e6e1;
+  text-shadow: 0 1px 12px rgba(10, 10, 12, 0.85), 0 0 2px rgba(10, 10, 12, 0.9);
 }
 .hero-scrim {
   position: absolute;
