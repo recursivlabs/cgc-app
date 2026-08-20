@@ -83,9 +83,16 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
         <div className="flex flex-wrap items-center gap-3">
           <span className="eyebrow">{KIND_LABELS[e.kind]}</span>
           {e.upcoming ? (
-            <span className="rounded-full bg-[var(--signal)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#141413]">
-              Upcoming
-            </span>
+            <>
+              <span className="rounded-full bg-[var(--signal)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#141413]">
+                Upcoming
+              </span>
+              {e.inviteOnly && (
+                <span className="rounded-full border border-[var(--amber)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[var(--amber)]">
+                  Invitation only
+                </span>
+              )}
+            </>
           ) : (
             <span className="rounded-full border border-[var(--line-strong)] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[var(--ink-dim)]">
               Past event
@@ -136,18 +143,40 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               <div className="mt-10 border border-[var(--line)] bg-[var(--panel)] p-8">
                 <p className="eyebrow mb-4">What to expect</p>
                 <ul className="space-y-3 text-[15px] leading-relaxed text-[var(--ink-dim)]">
-                  <li>
-                    <span className="font-semibold text-[var(--ink)]">Everyone is welcome.</span>{" "}
-                    You don&apos;t need the right opinions, just show up as you are.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[var(--ink)]">Free to attend.</span> We
-                    plan, coordinate, and cover the event.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[var(--ink)]">Real conversation.</span> No
-                    debate-style points-scoring. The room works toward what everyone can live with.
-                  </li>
+                  {e.inviteOnly ? (
+                    <>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Invitation only.</span>{" "}
+                        This gathering is for past and present CGC leaders. Members can invite
+                        someone new.
+                      </li>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Youth led.</span> The
+                        floor belongs to the student leaders.
+                      </li>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Real conversation.</span>{" "}
+                        No debate-style points-scoring. The room works toward what everyone can
+                        live with.
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Everyone is welcome.</span>{" "}
+                        You don&apos;t need the right opinions, just show up as you are.
+                      </li>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Free to attend.</span> We
+                        plan, coordinate, and cover the event.
+                      </li>
+                      <li>
+                        <span className="font-semibold text-[var(--ink)]">Real conversation.</span>{" "}
+                        No debate-style points-scoring. The room works toward what everyone can
+                        live with.
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             )}

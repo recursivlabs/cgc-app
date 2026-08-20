@@ -54,7 +54,7 @@ export default function About() {
                 <span className="font-semibold text-[var(--ink)]">Felisa Blazek</span> and{" "}
                 <span className="font-semibold text-[var(--ink)]">Brent Hamachek</span>{" "}
                 co-founded Common Ground Campus and co-authored{" "}
-                <em>Where the Bridge Begins to Burn</em>, the booklet behind the
+                <em>The Bridge Within</em>, the booklet behind the
                 movement.
               </p>
               <Link href="/resources" className="mt-4 inline-block text-sm font-semibold text-[var(--signal)]">

@@ -15,6 +15,7 @@ export interface CgcEvent {
   image?: string; // /events/<slug>.jpg in /public
   time?: string; // e.g. "8:00 pm ET"
   rsvp?: boolean; // upcoming events that take RSVPs
+  inviteOnly?: boolean; // Common Bridge + Bridge Works are invitational
 }
 
 export const KIND_LABELS: Record<EventKind, string> = {
@@ -40,6 +41,7 @@ export const EVENTS: CgcEvent[] = [
     date: "2026-08-20",
     time: "8:00 pm ET",
     rsvp: true,
+    inviteOnly: true,
   },
   {
     slug: "north-georgia",
@@ -130,8 +132,7 @@ export const EVENTS: CgcEvent[] = [
     topic: "Concealed carry",
     blurb:
       "Students asked CGC to help them talk about concealed carry on campus, without the shouting.",
-    date: "2023-02-15",
-    dateLabel: "2023",
+    date: "2023-02-24",
     vimeoIds: ["805295702", "805313299", "805313488", "805313924", "805316672"],
   },
   {
@@ -246,7 +247,6 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "alamo",
-    image: "/events/alamo.jpg",
     title: "The Alamo",
     campus: "San Antonio, TX",
     state: "TX",
@@ -257,7 +257,6 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "columbus-state",
-    image: "/events/columbus-state.jpg",
     title: "Columbus State University",
     campus: "Columbus State University, GA",
     state: "GA",
@@ -268,7 +267,6 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "utah-state",
-    image: "/events/utah-state.jpg",
     title: "Utah State University",
     campus: "Utah State University",
     state: "UT",
@@ -279,7 +277,6 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cal-state",
-    image: "/events/cal-state.jpg",
     title: "Cal State",
     campus: "Cal State, amphitheater & Riverwalk",
     state: "CA",
@@ -290,7 +287,6 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cattle-creek",
-    image: "/events/cattle-creek.jpg",
     title: "Cattle Creek Farm",
     campus: "Cattle Creek Farm, Bryan OH",
     state: "OH",

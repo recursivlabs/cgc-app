@@ -9,8 +9,8 @@
   --ink: #f5f4f0;
   --ink-dim: #a5a3a0;
   --ink-faint: #6e6c68;
-  --signal: #f2a31b;
-  --signal-deep: #d68e0f;
+  --signal: #3aa6f5;
+  --signal-deep: #1f8de0;
   --amber: #ffb255;
   --line: rgba(245, 244, 240, 0.12);
   --line-strong: rgba(245, 244, 240, 0.24);
@@ -45,6 +45,13 @@ body {
   line-height: 0.92;
   letter-spacing: 0.01em;
   font-weight: 400;
+}
+
+.grad {
+  background: linear-gradient(100deg, #3aa6f5 10%, #8b7cf8 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .eyebrow {
@@ -129,8 +136,8 @@ body {
   width: 44px;
   height: 44px;
   flex: none;
-  border: 1px solid rgba(242, 163, 27, 0.4);
-  background: rgba(242, 163, 27, 0.10);
+  border: 1px solid rgba(58, 166, 245, 0.4);
+  background: rgba(58, 166, 245, 0.10);
   color: var(--signal);
 }
 .pennant {

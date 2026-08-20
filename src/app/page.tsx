@@ -49,7 +49,7 @@ export default function Home() {
           <h1 className="display text-[clamp(3.4rem,11vw,9rem)]">
             Dialogue
             <br />
-            over <span className="text-[var(--signal)]">division</span>
+            over <span className="grad">division</span>
           </h1>
           <p className="hero-sub mt-6 max-w-xl text-lg leading-relaxed">
             We help campuses and communities host events where people talk{" "}
@@ -98,7 +98,7 @@ export default function Home() {
           <div>
             <p className="eyebrow mb-4">In the news</p>
             <h2 className="display text-[clamp(2.2rem,5vw,4rem)]">
-              See what we&apos;re <span className="text-[var(--signal)]">building</span>
+              See what we&apos;re <span className="grad">building</span>
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-[var(--ink-dim)]">
               Four minutes on who we are and why this works: the events, the
@@ -114,7 +114,7 @@ export default function Home() {
           <h2 className="display text-[clamp(2.2rem,5vw,4rem)]">
             Campuses are
             <br />
-            walking on <span className="text-[var(--signal)]">eggshells</span>
+            walking on <span className="grad">eggshells</span>
           </h2>
           <div className="flex flex-col justify-center gap-5 text-lg leading-relaxed text-[var(--ink-dim)]">
             <p>

@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Resources",
   description:
-    "The Where the Bridge Begins to Burn booklet, event videos, Cam on Campus, and the Courageously American vodcast.",
+    "The Bridge Within booklet, event videos, Cam on Campus, and the Courageously American vodcast.",
 };
 
 const RESOURCES = [
   {
-    title: "Where the Bridge Begins to Burn",
+    title: "The Bridge Within",
     tag: "The booklet",
     text: "The book behind the movement, by Felisa Blazek and Brent Hamachek. Why America feels fractured, and the daily practices that rebuild bridges. Publishing soon.",
     cta: { label: "Coming soon", href: null },
