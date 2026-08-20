@@ -23,17 +23,42 @@ function fmtDate(e: CgcEvent): { top: string; bottom: string } {
   return e.upcoming ? { top: "TBA", bottom: "" } : { top: "\u2014", bottom: "" };
 }
 
-function Row({ e }: { e: CgcEvent }) {
+function Thumb({ e }: { e: CgcEvent }) {
+  if (e.image) {
+    return (
+      <span className="relative block aspect-video w-full overflow-hidden bg-[var(--panel-2)]">
+        <img src={e.image} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        {e.vimeoIds?.length ? (
+          <span className="absolute bottom-1.5 right-1.5 rounded-sm bg-[rgba(10,10,12,0.75)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+            ▶ {e.vimeoIds.length}
+          </span>
+        ) : null}
+      </span>
+    );
+  }
+  return (
+    <span className="flex aspect-video w-full items-center justify-center bg-[var(--panel-2)]">
+      <img src="/logo.png" alt="" className="h-7 w-7 opacity-40" loading="lazy" />
+    </span>
+  );
+}
+
+function Row({ e, thumb }: { e: CgcEvent; thumb?: boolean }) {
   const d = fmtDate(e);
   return (
     <Link
       href={`/events/${e.slug}`}
-      className="group grid grid-cols-[72px_1fr_auto] items-center gap-5 border-t border-[var(--line)] py-6 transition-colors hover:bg-[var(--panel)] md:grid-cols-[88px_1fr_220px_auto] md:gap-8"
+      className={`group grid items-center gap-5 border-t border-[var(--line)] py-5 transition-colors hover:bg-[var(--panel)] md:gap-8 ${
+        thumb
+          ? "grid-cols-[72px_96px_1fr_auto] md:grid-cols-[88px_150px_1fr_220px_auto]"
+          : "grid-cols-[72px_1fr_auto] md:grid-cols-[88px_1fr_220px_auto]"
+      }`}
     >
       <span className="text-center">
         <span className="display block text-2xl leading-none text-[var(--signal)]">{d.top}</span>
         <span className="display block text-xl leading-tight text-[var(--ink)]">{d.bottom}</span>
       </span>
+      {thumb && <Thumb e={e} />}
       <span>
         <span className="display block text-xl leading-tight group-hover:text-[var(--signal)] transition-colors md:text-2xl">
           {e.title}
@@ -86,16 +111,13 @@ export default function EventsPage() {
       </section>
 
       <section className="mx-auto max-w-5xl px-5 pb-28">
-        <p className="eyebrow mb-2">Archive</p>
-        <p className="mb-6 max-w-xl text-sm leading-relaxed text-[var(--ink-dim)]">
-          Where we&apos;ve been — with the footage to prove it.
-        </p>
+        <p className="eyebrow mb-6">Archive</p>
         <div className="border-b border-[var(--line)]">
           {dated.map((e) => (
-            <Row key={e.slug} e={e} />
+            <Row key={e.slug} e={e} thumb />
           ))}
           {undated.map((e) => (
-            <Row key={e.slug} e={e} />
+            <Row key={e.slug} e={e} thumb />
           ))}
         </div>
       </section>
