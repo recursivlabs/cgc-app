@@ -13,7 +13,7 @@ export default function ShareButton({ title, text }: { title: string; text: stri
         await navigator.share({ title, text, url });
         return;
       } catch {
-        /* user dismissed — fall through to copy */
+        /* user dismissed - fall through to copy */
       }
     }
     try {

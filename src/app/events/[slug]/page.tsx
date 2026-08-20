@@ -19,14 +19,14 @@ export async function generateMetadata(props: {
     title: e.title,
     description: e.blurb,
     openGraph: {
-      title: `${e.title} — Common Ground Campus`,
+      title: `${e.title} | Common Ground Campus`,
       description: e.blurb,
       type: "article",
       images: e.image ? [{ url: e.image, width: 1280, height: 720 }] : undefined,
     },
     twitter: {
       card: e.image ? "summary_large_image" : "summary",
-      title: `${e.title} — Common Ground Campus`,
+      title: `${e.title} | Common Ground Campus`,
       description: e.blurb,
       images: e.image ? [e.image] : undefined,
     },
@@ -41,7 +41,7 @@ function fullDate(e: CgcEvent): string | null {
       day: "numeric",
       year: "numeric",
     });
-    // Past events with a label only know the date approximately — show the label.
+    // Past events with a label only know the date approximately - show the label.
     if (e.dateLabel && !e.upcoming) return e.dateLabel;
     return d;
   }
@@ -122,7 +122,7 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
                         src={`https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0`}
                         className="absolute inset-0 h-full w-full"
                         allow="fullscreen"
-                        title={`${e.title} — video ${i + 1}`}
+                        title={`${e.title}, video ${i + 1}`}
                         loading="lazy"
                       />
                     </div>
@@ -131,14 +131,14 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               </div>
             )}
 
-            {/* How it works — context for people deciding to attend */}
+            {/* How it works - context for people deciding to attend */}
             {e.upcoming && (
               <div className="mt-10 border border-[var(--line)] bg-[var(--panel)] p-8">
                 <p className="eyebrow mb-4">What to expect</p>
                 <ul className="space-y-3 text-[15px] leading-relaxed text-[var(--ink-dim)]">
                   <li>
                     <span className="font-semibold text-[var(--ink)]">Everyone is welcome.</span>{" "}
-                    You don&apos;t need the right opinions — just show up as you are.
+                    You don&apos;t need the right opinions, just show up as you are.
                   </li>
                   <li>
                     <span className="font-semibold text-[var(--ink)]">Free to attend.</span> We
@@ -161,7 +161,7 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               <Fact label="Location">
                 {e.campus}
                 {e.state !== "US" && e.campus !== e.title ? `, ${e.state}` : ""}
-                {e.state === "US" ? " — join from anywhere" : ""}
+                {e.state === "US" ? " (join from anywhere)" : ""}
               </Fact>
               <Fact label="Program">{KIND_LABELS[e.kind]}</Fact>
               <Fact label="Cost">Free</Fact>
@@ -173,7 +173,7 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
                     Add to calendar
                   </a>
                 )}
-                <ShareButton title={`${e.title} — Common Ground Campus`} text={e.blurb} />
+                <ShareButton title={`${e.title} | Common Ground Campus`} text={e.blurb} />
               </div>
 
               {!e.upcoming && (

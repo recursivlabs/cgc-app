@@ -11,7 +11,7 @@ export async function POST() {
       const r = getRecursiv();
       await r.auth.signOut(token);
     } catch {
-      // Non-fatal — we still clear the cookie below
+      // Non-fatal - we still clear the cookie below
     }
   }
 

@@ -5,7 +5,7 @@ import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-rea
 export const metadata: Metadata = {
   title: "Programs",
   description:
-    "Bridging the Divide, Bridge to Tomorrow, Bridge Works, and Common Bridge — four programs, one goal: better conversations.",
+    "Bridging the Divide, Bridge to Tomorrow, Bridge Works, and Common Bridge: four programs, one goal: better conversations.",
 };
 
 const PROGRAMS = [
@@ -14,7 +14,7 @@ const PROGRAMS = [
     name: "Bridging the Divide",
     tag: "Structured dialogue",
     Icon: MessagesSquare,
-    text: "Students pick a topic that divides their campus. People with opposing views take the stage — not to debate, but to name their real concerns and work out an answer everyone can live with. Audiences keep telling us the same thing: more fun than the fight they expected.",
+    text: "Students pick a topic that divides their campus. People with opposing views take the stage, not to debate, but to name their real concerns and work out an answer everyone can live with. Audiences keep telling us the same thing: more fun than the fight they expected.",
     cta: { label: "Bring one to your campus", href: "/get-involved#host" },
   },
   {
@@ -30,7 +30,7 @@ const PROGRAMS = [
     name: "Bridge Works",
     tag: "Mentorship & training",
     Icon: GraduationCap,
-    text: "Leadership training for the students who step up. Cam on Campus teaches interviewing and editing on real streets. The Courageously American vodcast gives young voices a platform. Mentors open doors — referrals, publications, career introductions.",
+    text: "Leadership training for the students who step up. Cam on Campus teaches interviewing and editing on real streets. The Courageously American vodcast gives young voices a platform. Mentors open doors: referrals, publications, career introductions.",
     cta: { label: "Apply for mentorship", href: "/get-involved" },
   },
   {
@@ -38,7 +38,7 @@ const PROGRAMS = [
     name: "Common Bridge",
     tag: "Monthly online summit",
     Icon: Globe,
-    text: "A monthly forum for past and present CGC leaders across the country — invitation only, and every member can invite someone new. Four out of five participants have recommended a friend.",
+    text: "A monthly forum for past and present CGC leaders across the country. Invitation only, and every member can invite someone new. Four out of five participants have recommended a friend.",
     cta: { label: "Get invited", href: "/auth/register" },
   },
 ];

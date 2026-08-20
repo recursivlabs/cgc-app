@@ -35,7 +35,7 @@ export const EVENTS: CgcEvent[] = [
     kind: "online",
     topic: "Youth leadership",
     blurb:
-      "The first monthly forum for past and present CGC leaders across the country. Invitation only — members can invite others.",
+      "The first monthly forum for past and present CGC leaders across the country. Invitation only. Members can invite others.",
     upcoming: true,
     date: "2026-08-20",
     time: "8:00 pm ET",
@@ -102,7 +102,7 @@ export const EVENTS: CgcEvent[] = [
     kind: "dialogue",
     topic: "Race on campus",
     blurb:
-      "Students with opposing views took the stage to talk about race — and found the concerns they shared.",
+      "Students with opposing views took the stage to talk about race, and found the concerns they shared.",
     date: "2022-05-01",
     dateLabel: "2022",
     vimeoIds: ["716797965", "717618948", "717620232", "717621985", "717624247", "717624812"],
@@ -129,7 +129,7 @@ export const EVENTS: CgcEvent[] = [
     kind: "dialogue",
     topic: "Concealed carry",
     blurb:
-      "Students asked CGC to help them talk about concealed carry on campus — without the shouting.",
+      "Students asked CGC to help them talk about concealed carry on campus, without the shouting.",
     date: "2023-02-15",
     dateLabel: "2023",
     vimeoIds: ["805295702", "805313299", "805313488", "805313924", "805316672"],
@@ -307,7 +307,7 @@ export function eventStates(): string[] {
   return [...new Set(EVENTS.map((e) => e.state).filter((s) => s !== "US"))].sort();
 }
 
-/** Schools and places CGC has worked with — pennant marquee. */
+/** Schools and places CGC has worked with - pennant marquee. */
 export const SCHOOLS = [
   "Georgia",
   "Houston",

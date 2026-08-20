@@ -3,7 +3,7 @@ import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import { getEvent } from "@/lib/events";
 
-// POST /api/rsvp — RSVP the signed-in member for an event
+// POST /api/rsvp - RSVP the signed-in member for an event
 export async function POST(req: NextRequest) {
   try {
     const user = await getSessionUser();

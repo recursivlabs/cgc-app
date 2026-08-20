@@ -43,7 +43,7 @@ export default function Footer() {
         <div className="mt-12 flex flex-col gap-3 border-t border-[var(--line)] pt-6 text-xs text-[var(--ink-faint)] md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Common Ground Campus</p>
           <p>
-            Built on{" "}
+            Built with{" "}
             <a href="https://minds.com" target="_blank" rel="noopener noreferrer" className="text-[var(--ink-dim)] hover:text-[var(--ink)]">
               Minds
             </a>

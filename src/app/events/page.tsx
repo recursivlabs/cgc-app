@@ -5,7 +5,7 @@ import { archivedEvents, upcomingEvents, KIND_LABELS, type CgcEvent } from "@/li
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "Upcoming Common Ground Campus events and the archive — dialogues, service projects, pop-up cinemas, and the US250 Tailgate Tour.",
+    "Upcoming Common Ground Campus events and the archive: dialogues, service projects, pop-up cinemas, and the US250 Tailgate Tour.",
 };
 
 function fmtDate(e: CgcEvent): { top: string; bottom: string } {
@@ -28,7 +28,7 @@ function fmtDate(e: CgcEvent): { top: string; bottom: string } {
       bottom: String(d.getFullYear()),
     };
   }
-  return e.upcoming ? { top: "TBA", bottom: "" } : { top: "\u2014", bottom: "" };
+  return e.upcoming ? { top: "TBA", bottom: "" } : { top: "", bottom: "" };
 }
 
 function Thumb({ e }: { e: CgcEvent }) {

@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     // We call Better Auth directly (instead of the SDK's verifyOtp) so we can
     // capture the SIGNED session token from the Set-Cookie header. The SDK
     // returns the unsigned body token, which Better Auth's get-session later
-    // rejects (signature mismatch) — that is why sessions didn't persist and
+    // rejects (signature mismatch) - that is why sessions didn't persist and
     // users bounced back to /auth after entering a valid code.
     const res = await fetch(`${RECURSIV_ORIGIN}/api/auth/sign-in/email-otp`, {
       method: "POST",

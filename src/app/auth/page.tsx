@@ -74,7 +74,7 @@ function AuthContent() {
         </h1>
         <p className="mt-3 text-center text-sm leading-relaxed text-[var(--ink-dim)]">
           {step === "email"
-            ? "New or returning — just enter your email. No password, we send you a code."
+            ? "New or returning, just enter your email. No password, we send you a code."
             : `We sent a 6-digit code to ${email}`}
         </p>
 

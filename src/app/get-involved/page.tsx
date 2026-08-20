@@ -36,7 +36,7 @@ const WAYS: Way[] = [
   {
     id: "host",
     title: "Host an event",
-    text: "The main way this works: you invite us in. We plan it, coordinate it, and pay for it — your group brings the people. Any campus, any community, any divisive topic.",
+    text: "The main way this works: you invite us in. We plan it, coordinate it, and pay for it. Your group brings the people. Any campus, any community, any divisive topic.",
     cta: { label: "Start the conversation", href: HOST_MAILTO },
     external: true,
     featured: true,
@@ -57,7 +57,7 @@ const WAYS: Way[] = [
   {
     id: "mentor",
     title: "Mentor or partner",
-    text: "Bridge Works runs on people who reach back — mentors, sponsors, and partner organizations who open doors for young leaders.",
+    text: "Bridge Works runs on people who reach back: mentors, sponsors, and partner organizations who open doors for young leaders.",
     cta: { label: "Reach out", href: "mailto:felisa@commongroundcampus.com?subject=Mentoring%20%2F%20partnership" },
     external: true,
   },

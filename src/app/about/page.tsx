@@ -22,14 +22,14 @@ export default function About() {
           <div className="space-y-6 text-lg leading-relaxed text-[var(--ink-dim)]">
             <p>
               Common Ground Campus doesn&apos;t host its own rallies. A student group, a
-              school, or a community invites us in — and we help them run an event
+              school, or a community invites us in, and we help them run an event
               their campus actually wants to attend. We plan it, coordinate it, and
               pay for it. They bring their people.
             </p>
             <p>
               Our method is simple to say and rare to see: get people with opposing
               views in the same room, skip the debate, and work toward something
-              everyone can live with. Not a compromise of convictions — a discovery
+              everyone can live with. Not a compromise of convictions but a discovery
               of what&apos;s shared.
             </p>
             <p className="text-[var(--ink)]">
@@ -42,10 +42,10 @@ export default function About() {
             <div className="card p-7">
               <h2 className="display text-2xl">How an event works</h2>
               <ol className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink-dim)]">
-                <li><span className="font-semibold text-[var(--signal)]">1 —</span> A group picks a topic their campus avoids.</li>
-                <li><span className="font-semibold text-[var(--signal)]">2 —</span> Students with opposing views take the stage.</li>
-                <li><span className="font-semibold text-[var(--signal)]">3 —</span> No debate. Each names a real concern.</li>
-                <li><span className="font-semibold text-[var(--signal)]">4 —</span> The room works out what everyone can live with.</li>
+                <li><span className="font-semibold text-[var(--signal)]">1.</span> A group picks a topic their campus avoids.</li>
+                <li><span className="font-semibold text-[var(--signal)]">2.</span> Students with opposing views take the stage.</li>
+                <li><span className="font-semibold text-[var(--signal)]">3.</span> No debate. Each names a real concern.</li>
+                <li><span className="font-semibold text-[var(--signal)]">4.</span> The room works out what everyone can live with.</li>
               </ol>
             </div>
             <div className="card p-7">
@@ -54,7 +54,7 @@ export default function About() {
                 <span className="font-semibold text-[var(--ink)]">Felisa Blazek</span> and{" "}
                 <span className="font-semibold text-[var(--ink)]">Brent Hamachek</span>{" "}
                 co-founded Common Ground Campus and co-authored{" "}
-                <em>Where the Bridge Begins to Burn</em> — the booklet behind the
+                <em>Where the Bridge Begins to Burn</em>, the booklet behind the
                 movement.
               </p>
               <Link href="/resources" className="mt-4 inline-block text-sm font-semibold text-[var(--signal)]">

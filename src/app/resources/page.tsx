@@ -10,13 +10,13 @@ const RESOURCES = [
   {
     title: "Where the Bridge Begins to Burn",
     tag: "The booklet",
-    text: "The book behind the movement, by Felisa Blazek and Brent Hamachek. Why America feels fractured — and the daily practices that rebuild bridges. Publishing soon.",
+    text: "The book behind the movement, by Felisa Blazek and Brent Hamachek. Why America feels fractured, and the daily practices that rebuild bridges. Publishing soon.",
     cta: { label: "Coming soon", href: null },
   },
   {
     title: "Cam on Campus",
     tag: "Video training",
-    text: "Students learn to interview strangers on their own campus — how to get past “yeah” and “yup” — and edit what they capture. Watch the results on our TikTok.",
+    text: "Students learn to interview strangers on their own campus, get past “yeah” and “yup”, and edit what they capture. Watch the results on our TikTok.",
     cta: { label: "Watch on TikTok", href: "https://www.tiktok.com/@commongroundcampus" },
   },
   {
@@ -34,7 +34,7 @@ const RESOURCES = [
   {
     title: "The Philadelphia Declaration",
     tag: "Founding document",
-    text: "A modern consensus document drafted by 40+ scholars and leaders — including our founders — reasserting the principles we share.",
+    text: "A modern consensus document drafted by 40+ scholars and leaders, including our founders, reasserting the principles we share.",
     cta: { label: "Sign On 250", href: "https://sign-on250.org" },
   },
 ];

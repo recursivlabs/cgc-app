@@ -10,7 +10,7 @@ let ready = false;
 function getPool(): Pool {
   if (!pool) {
     const url = process.env.DATABASE_URL;
-    if (!url) throw new Error("DATABASE_URL is not set — the platform injects it on deploy");
+    if (!url) throw new Error("DATABASE_URL is not set - the platform injects it on deploy");
     pool = new Pool({ connectionString: url, max: 3 });
   }
   return pool;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEvent } from "@/lib/events";
 
-/** GET /api/ics?event=<slug> — calendar file for an upcoming event. */
+/** GET /api/ics?event=<slug> - calendar file for an upcoming event. */
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("event");
   const e = slug ? getEvent(slug) : undefined;
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     `UID:${e.slug}@commongroundcampus.com`,
     `DTSTART;VALUE=DATE:${dt}`,
     `DTEND;VALUE=DATE:${dayAfter}`,
-    `SUMMARY:${e.title} — Common Ground Campus`,
+    `SUMMARY:${e.title} | Common Ground Campus`,
     `DESCRIPTION:${e.blurb.replace(/[,;]/g, "\\$&")}${e.time ? `\\n${e.time}` : ""}\\n${site}/events/${e.slug}`,
     `LOCATION:${e.campus.replace(/,/g, "\\,")}`,
     `URL:${site}/events/${e.slug}`,

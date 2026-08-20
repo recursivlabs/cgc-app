@@ -59,7 +59,7 @@ function RsvpInner({ eventId }: { eventId: string }) {
   if (state === "done") {
     return (
       <span className="btn btn-ghost !cursor-default">
-        <Check className="h-4 w-4 text-[var(--signal)]" /> You&apos;re in — see you there
+        <Check className="h-4 w-4 text-[var(--signal)]" /> You&apos;re in. See you there
       </span>
     );
   }
@@ -81,7 +81,7 @@ function RsvpInner({ eventId }: { eventId: string }) {
         disabled={state === "loading" || user === undefined}
         className="btn btn-signal disabled:opacity-60"
       >
-        {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : "RSVP — save my spot"}
+        {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save my spot"}
       </button>
       {error && <span className="text-xs text-[var(--signal)]">{error}</span>}
     </span>

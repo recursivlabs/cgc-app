@@ -21,7 +21,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://commongroundcampus.com"),
   title: {
-    default: "Common Ground Campus — Dialogue over division",
+    default: "Common Ground Campus | Dialogue over division",
     template: "%s | Common Ground Campus",
   },
   description:

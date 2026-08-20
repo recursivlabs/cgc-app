@@ -10,7 +10,7 @@ const PROGRAMS = [
   },
   {
     name: "Bridge to Tomorrow",
-    text: "Service projects and immersive experiences — border cleanups, beach days, pop-up cinemas.",
+    text: "Service projects and immersive experiences: border cleanups, beach days, pop-up cinemas.",
     Icon: HeartHandshake,
   },
   {
@@ -84,7 +84,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── The reel — as seen in the news ───────────────── */}
+      {/* ── The reel - as seen in the news ───────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-24">
         <div className="grid items-center gap-10 lg:grid-cols-[1.5fr_1fr]">
           <div className="relative aspect-video border border-[var(--line)] bg-[var(--panel-2)]">
@@ -92,7 +92,7 @@ export default function Home() {
               src={`https://player.vimeo.com/video/${HERO_VIMEO_ID}?title=0&byline=0&portrait=0`}
               className="absolute inset-0 h-full w-full"
               allow="fullscreen; picture-in-picture"
-              title="Common Ground Campus — in the news"
+              title="Common Ground Campus in the news"
             />
           </div>
           <div>
@@ -101,7 +101,7 @@ export default function Home() {
               See what we&apos;re <span className="text-[var(--signal)]">building</span>
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-[var(--ink-dim)]">
-              Four minutes on who we are and why this works — the events, the
+              Four minutes on who we are and why this works: the events, the
               students, and the coverage. Press play.
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function Home() {
               silence looks like agreement. It isn&apos;t.
             </p>
             <p className="text-[var(--ink)]">
-              We build the rooms where that changes — low-pressure, student-powered
+              We build the rooms where that changes: low-pressure, student-powered
               events where real conversation gets easy again.
             </p>
           </div>
