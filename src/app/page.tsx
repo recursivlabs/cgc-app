@@ -180,12 +180,12 @@ export default function Home() {
           </div>
           <div className="card p-10">
             <h2 className="display text-4xl">
-              The water&apos;s <span className="text-[var(--amber)]">warm</span>
+              Join the <span className="text-[var(--amber)]">movement</span>
             </h2>
             <p className="mt-4 leading-relaxed text-[var(--ink-dim)]">
-              You don&apos;t need the right opinions to show up. You just need to show
-              up. Join the #BridgeBuilders and hear about what&apos;s happening near
-              you.
+              Become a #BridgeBuilder to hear about upcoming events, get invited
+              to Common Bridge summits, and connect with people doing this work
+              across the country.
             </p>
             <Link href="/auth/register" className="btn btn-signal mt-7">
               Join the movement →

@@ -70,13 +70,7 @@ function AuthContent() {
       <div className="w-full max-w-md">
         <p className="eyebrow mb-4 text-center">#BridgeBuilders</p>
         <h1 className="display text-center text-4xl">
-          {step === "email" ? (
-            <>
-              Come on <span className="text-[var(--signal)]">in</span>
-            </>
-          ) : (
-            "Check your email"
-          )}
+          {step === "email" ? "Sign in or join" : "Check your email"}
         </h1>
         <p className="mt-3 text-center text-sm leading-relaxed text-[var(--ink-dim)]">
           {step === "email"
