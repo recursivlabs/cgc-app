@@ -152,7 +152,6 @@ export const EVENTS: CgcEvent[] = [
     slug: "hope-college",
     image: "/events/hope-college.jpg",
     date: "2023-11-14",
-    dateLabel: "Nov 2023",
     title: "Hope College",
     campus: "Hope College",
     state: "MI",
@@ -171,10 +170,13 @@ export const EVENTS: CgcEvent[] = [
     topic: "Service",
     blurb:
       "250+ students in 100-degree heat collected more than 7½ tons along the border. “It’s changing how I see things.”",
-    dateLabel: "Sept 9–10",
+    date: "2023-09-09",
+    dateLabel: "Sept 2023",
   },
   {
     slug: "upenn-cinema",
+    date: "2024-05-01",
+    dateLabel: "2024",
     image: "/events/upenn-cinema.jpg",
     title: "UPenn Pop-Up Cinema",
     campus: "University of Pennsylvania",
@@ -207,6 +209,8 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "chicago-cleanup",
+    date: "2025-04-15",
+    dateLabel: "Spring 2025",
     image: "/events/chicago-cleanup.jpg",
     title: "Loyola Beach Cleanup",
     campus: "Northwestern U & Loyola U Chicago",
@@ -218,6 +222,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "rye-beach",
+    date: "2023-04-15",
     image: "/events/rye-beach.jpg",
     title: "Rye Beach Cleanup",
     campus: "Rye, New Hampshire",
@@ -229,6 +234,8 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "mt-rushmore",
+    date: "2025-07-04",
+    dateLabel: "2025",
     image: "/events/mt-rushmore.jpg",
     title: "Mt. Rushmore: Raising Old Glory",
     campus: "Mount Rushmore, SD",
@@ -247,7 +254,6 @@ export const EVENTS: CgcEvent[] = [
     topic: "US250 Tailgate Tour",
     blurb: "The US250 Tailgate Tour at the Alamo.",
     date: "2026-05-01",
-    dateLabel: "May 1\u20132",
   },
   {
     slug: "columbus-state",
@@ -259,7 +265,6 @@ export const EVENTS: CgcEvent[] = [
     topic: "US250 Tailgate Tour",
     blurb: "The US250 Tailgate Tour near Columbus State.",
     date: "2026-04-23",
-    dateLabel: "April 23\u201324",
   },
   {
     slug: "utah-state",
@@ -271,7 +276,6 @@ export const EVENTS: CgcEvent[] = [
     topic: "US250 Tailgate Tour",
     blurb: "US250 Tailgate Tour stop at Utah State.",
     date: "2026-07-10",
-    dateLabel: "July 10\u201311",
   },
   {
     slug: "cal-state",
@@ -283,7 +287,6 @@ export const EVENTS: CgcEvent[] = [
     topic: "US250 Tailgate Tour",
     blurb: "US250 Tailgate Tour at the amphitheater and Riverwalk near Cal State.",
     date: "2026-07-02",
-    dateLabel: "July 2\u20133",
   },
   {
     slug: "cattle-creek",
@@ -295,7 +298,6 @@ export const EVENTS: CgcEvent[] = [
     topic: "US250 Tailgate Tour",
     blurb: "US250 Tailgate Tour at Cattle Creek Farm in Bryan, Ohio.",
     date: "2026-07-23",
-    dateLabel: "July 23\u201325",
   },
 ];
 

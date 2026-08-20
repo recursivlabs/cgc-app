@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 function fmtDate(e: CgcEvent): { top: string; bottom: string } {
-  // Past events show Month + Year (the year is what matters in an archive);
-  // the full date or range lives on the event page.
-  if (e.dateLabel && (e.upcoming || !e.date)) {
+  // An explicit label always wins; otherwise past rows show Month + Year
+  // (the year is what matters in an archive) and upcoming rows Month + Day.
+  if (e.dateLabel) {
     const [month, ...rest] = e.dateLabel.split(" ");
     return { top: month, bottom: rest.join(" ") };
   }
