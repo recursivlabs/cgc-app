@@ -44,7 +44,7 @@ export default function Programs() {
       <section className="mx-auto max-w-6xl px-5 pb-16 pt-36">
         <p className="eyebrow mb-5">Programs</p>
         <h1 className="display max-w-3xl text-[clamp(2.6rem,7vw,5.5rem)]">
-          Four ways <span className="text-[var(--signal)]">in</span>
+          Our <span className="text-[var(--signal)]">programs</span>
         </h1>
       </section>
 

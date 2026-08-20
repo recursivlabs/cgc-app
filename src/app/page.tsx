@@ -99,7 +99,7 @@ export default function Home() {
 
       {/* ── Programs ─────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 pb-28">
-        <p className="eyebrow mb-8">Four ways in</p>
+        <p className="eyebrow mb-8">Our programs</p>
         <div className="grid gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] md:grid-cols-2">
           {PROGRAMS.map((p) => (
             <Link
