@@ -281,7 +281,7 @@ export const EVENTS: CgcEvent[] = [
     slug: "cal-state",
     image: "/events/cal-state.jpg",
     title: "Cal State",
-    campus: "Cal State \u2014 amphitheater & Riverwalk",
+    campus: "Cal State, amphitheater & Riverwalk",
     state: "CA",
     kind: "us250",
     topic: "US250 Tailgate Tour",
