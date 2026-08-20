@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EVENTS, KIND_LABELS, eventStates } from "@/lib/events";
+import { EVENTS, KIND_LABELS, SCHOOLS } from "@/lib/events";
 
 const PROGRAMS = [
   {
@@ -59,15 +59,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── States marquee ───────────────────────────────── */}
-      <section className="border-y border-[var(--line)] py-5" aria-label="States we have visited">
+      {/* ── Campus pennants marquee ──────────────────────── */}
+      <section className="border-y border-[var(--line)] py-5" aria-label="Campuses we have worked with">
         <div className="overflow-hidden">
           <div className="marquee-track">
             {[0, 1].map((i) => (
-              <div key={i} className="flex shrink-0 items-center" aria-hidden={i === 1}>
-                {eventStates().map((s) => (
-                  <span key={`${i}-${s}`} className="display mx-8 text-2xl text-[var(--ink-faint)]">
-                    {s}
+              <div key={i} className="flex shrink-0 items-center gap-10 pr-10" aria-hidden={i === 1}>
+                {SCHOOLS.map((name) => (
+                  <span key={`${i}-${name}`} className="pennant">
+                    <span className="display text-lg text-[var(--ink-dim)]">{name}</span>
                   </span>
                 ))}
               </div>
@@ -128,7 +128,7 @@ export default function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {featured.map((e) => (
-            <Link key={e.slug} href={`/events#${e.slug}`} className="card group overflow-hidden">
+            <Link key={e.slug} href={`/events/${e.slug}`} className="card group overflow-hidden">
               <div className="relative aspect-video overflow-hidden bg-[var(--panel-2)]">
                 <img
                   src={e.image!}

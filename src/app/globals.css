@@ -135,6 +135,17 @@ body {
   width: max-content;
   animation: marquee 36s linear infinite;
 }
+.pennant {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%);
+  padding-right: 24px;
+  background: var(--panel);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
 /* Hero image treatment — slow push-in, no third-party iframe */
 .hero-img {

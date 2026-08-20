@@ -13,6 +13,8 @@ export interface CgcEvent {
   date?: string; // ISO start date when known
   dateLabel?: string; // human display, e.g. "Sept 4\u20135"
   image?: string; // /events/<slug>.jpg in /public
+  time?: string; // e.g. "8:00 pm ET"
+  rsvp?: boolean; // upcoming events that take RSVPs
 }
 
 export const KIND_LABELS: Record<EventKind, string> = {
@@ -36,9 +38,12 @@ export const EVENTS: CgcEvent[] = [
       "The first monthly forum for past and present CGC leaders across the country. Invitation only — members can invite others.",
     upcoming: true,
     date: "2026-08-20",
+    time: "8:00 pm ET",
+    rsvp: true,
   },
   {
     slug: "north-georgia",
+    rsvp: true,
     title: "University of North Georgia",
     campus: "University of North Georgia",
     state: "GA",
@@ -51,6 +56,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "indiana-wesleyan",
+    rsvp: true,
     title: "Indiana Wesleyan University",
     campus: "Indiana Wesleyan University",
     state: "IN",
@@ -63,6 +69,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "south-fork-ranch",
+    rsvp: true,
     title: "South Fork Ranch",
     campus: "South Fork Ranch Event Center, Dallas TX",
     state: "TX",
@@ -75,6 +82,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "south-university-wpb",
+    rsvp: true,
     title: "South University, West Palm Beach",
     campus: "South University, West Palm Beach FL",
     state: "FL",
@@ -136,6 +144,8 @@ export const EVENTS: CgcEvent[] = [
   {
     slug: "hope-college",
     image: "/events/hope-college.jpg",
+    date: "2023-11-14",
+    dateLabel: "Nov 2023",
     title: "Hope College",
     campus: "Hope College",
     state: "MI",
@@ -279,4 +289,38 @@ export const HERO_VIMEO_ID = "755151294";
 
 export function eventStates(): string[] {
   return [...new Set(EVENTS.map((e) => e.state).filter((s) => s !== "US"))].sort();
+}
+
+/** Schools and places CGC has worked with — pennant marquee. */
+export const SCHOOLS = [
+  "Georgia",
+  "Houston",
+  "West Virginia",
+  "Hope College",
+  "Rollins",
+  "Penn",
+  "Utah State",
+  "North Georgia",
+  "Indiana Wesleyan",
+  "Northwestern",
+  "Loyola Chicago",
+  "Cal State",
+  "Medinah",
+  "South University",
+];
+
+export function upcomingEvents(): CgcEvent[] {
+  return EVENTS.filter((e) => e.upcoming).sort((a, b) =>
+    (a.date || "9999").localeCompare(b.date || "9999")
+  );
+}
+
+export function archivedEvents(): CgcEvent[] {
+  return EVENTS.filter((e) => !e.upcoming).sort((a, b) =>
+    (b.date || "0000").localeCompare(a.date || "0000")
+  );
+}
+
+export function getEvent(slug: string): CgcEvent | undefined {
+  return EVENTS.find((e) => e.slug === slug);
 }

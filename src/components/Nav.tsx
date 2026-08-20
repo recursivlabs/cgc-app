@@ -25,8 +25,11 @@ export default function Nav() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--line)] bg-[rgba(10,10,12,0.82)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="display text-lg tracking-wide">
-          Common<span className="text-[var(--signal)]">Ground</span>Campus
+        <Link href="/" className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="" className="h-8 w-8" />
+          <span className="display text-lg tracking-wide">
+            Common<span className="text-[var(--signal)]">Ground</span>Campus
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

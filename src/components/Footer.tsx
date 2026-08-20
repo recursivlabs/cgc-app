@@ -6,8 +6,11 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-5 py-14">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <p className="display text-2xl">
-              Common<span className="text-[var(--signal)]">Ground</span>Campus
+            <p className="flex items-center gap-3">
+              <img src="/logo.png" alt="" className="h-9 w-9" />
+              <span className="display text-2xl">
+                Common<span className="text-[var(--signal)]">Ground</span>Campus
+              </span>
             </p>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--ink-dim)]">
               Dialogue over division. We help campuses and communities host
