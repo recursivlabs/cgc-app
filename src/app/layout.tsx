@@ -1,5 +1,20 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const geist = localFont({
+  src: "../fonts/Geist-Variable.woff2",
+  weight: "100 900",
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const anton = localFont({
+  src: "../fonts/Anton.woff2",
+  variable: "--font-anton",
+  display: "swap",
+  adjustFontFallback: "Arial",
+});
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -20,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geist.variable} ${anton.variable}`}>
       <body>
         <Nav />
         <main>{children}</main>

@@ -33,12 +33,15 @@ export default function Home() {
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative flex min-h-[92svh] items-end overflow-hidden">
-        <div
-          className="hero-img"
-          style={{ backgroundImage: "url(/events/hero.jpg)" }}
-          role="img"
-          aria-label="Students in dialogue on stage at a Common Ground Campus event"
-        />
+        <div className="hero-img">
+          <img
+            src="/events/hero.jpg"
+            alt="Students in dialogue on stage at a Common Ground Campus event"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
         <div className="hero-scrim" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-40">

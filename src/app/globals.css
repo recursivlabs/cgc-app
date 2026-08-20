@@ -2,19 +2,6 @@
 
 /* ── CGC design system — cinematic dark, one hot accent ─────────────── */
 
-@font-face {
-  font-family: "Geist";
-  src: url("/fonts/Geist-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Anton";
-  src: url("/fonts/Anton.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
-
 :root {
   --ground: #0a0a0c;
   --panel: #141417;
@@ -27,8 +14,8 @@
   --amber: #ffb255;
   --line: rgba(245, 244, 240, 0.12);
   --line-strong: rgba(245, 244, 240, 0.24);
-  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  --display: "Anton", "Arial Narrow", sans-serif;
+  --sans: var(--font-geist), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --display: var(--font-anton), "Arial Narrow", Arial, sans-serif;
 }
 
 html {
@@ -162,8 +149,13 @@ body {
 .hero-img {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center 30%;
+  overflow: hidden;
+}
+.hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
   animation: kenburns 24s ease-out both;
 }
 @keyframes kenburns {
@@ -171,7 +163,7 @@ body {
   to { transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-img { animation: none; }
+  .hero-img img { animation: none; }
 }
 
 /* Event card media */
