@@ -97,7 +97,7 @@ export default function EventsPage() {
 
   return (
     <>
-      <section className="mx-auto max-w-5xl px-5 pb-12 pt-36">
+      <section className="mx-auto max-w-6xl px-5 pb-12 pt-36">
         <p className="eyebrow mb-5">Events</p>
         <h1 className="display max-w-3xl text-[clamp(2.6rem,7vw,5.5rem)]">
           What&apos;s <span className="text-[var(--signal)]">next</span>
@@ -110,7 +110,7 @@ export default function EventsPage() {
         </p>
       </section>
 
-      <section className="mx-auto max-w-5xl px-5 pb-20">
+      <section className="mx-auto max-w-6xl px-5 pb-20">
         <div className="border-b border-[var(--line)]">
           {upcoming.map((e) => (
             <Row key={e.slug} e={e} />
@@ -118,7 +118,7 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-5 pb-28">
+      <section className="mx-auto max-w-6xl px-5 pb-28">
         <p className="eyebrow mb-6">Archive</p>
         <div className="border-b border-[var(--line)]">
           {dated.map((e) => (
