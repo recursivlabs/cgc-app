@@ -94,11 +94,11 @@ export default function Home() {
           </div>
           <div>
             <p className="eyebrow mb-4">In the news</p>
-            <h2 className="display text-[clamp(1.8rem,3.5vw,2.8rem)]">
+            <h2 className="display text-[clamp(2.2rem,5vw,4rem)]">
               See what we&apos;re <span className="text-[var(--signal)]">building</span>
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-[var(--ink-dim)]">
-              Two minutes on who we are and why this works — the events, the
+              Four minutes on who we are and why this works — the events, the
               students, and the coverage. Press play.
             </p>
           </div>
