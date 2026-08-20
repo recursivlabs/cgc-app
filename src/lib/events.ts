@@ -103,6 +103,8 @@ export const EVENTS: CgcEvent[] = [
     topic: "Race on campus",
     blurb:
       "Students with opposing views took the stage to talk about race — and found the concerns they shared.",
+    date: "2022-05-01",
+    dateLabel: "2022",
     vimeoIds: ["716797965", "717618948", "717620232", "717621985", "717624247", "717624812"],
   },
   {
@@ -115,6 +117,7 @@ export const EVENTS: CgcEvent[] = [
     topic: "Student loans",
     blurb:
       "A dialogue on student debt that participants said was “much more fun” than the debate they expected.",
+    date: "2022-11-15",
     vimeoIds: ["779667184", "779667477", "779667984", "779668424", "779689730"],
   },
   {
@@ -127,6 +130,8 @@ export const EVENTS: CgcEvent[] = [
     topic: "Concealed carry",
     blurb:
       "Students asked CGC to help them talk about concealed carry on campus — without the shouting.",
+    date: "2023-02-15",
+    dateLabel: "2023",
     vimeoIds: ["805295702", "805313299", "805313488", "805313924", "805316672"],
   },
   {
@@ -139,6 +144,8 @@ export const EVENTS: CgcEvent[] = [
     topic: "Student rights",
     blurb:
       "Our first high school event. Four students tackled student rights in front of peers, teachers, and administrators.",
+    date: "2022-12-01",
+    dateLabel: "2022",
     vimeoIds: ["783250951", "783251570", "783252308", "783252777", "783252971", "783253274"],
   },
   {
@@ -164,6 +171,7 @@ export const EVENTS: CgcEvent[] = [
     topic: "Service",
     blurb:
       "250+ students in 100-degree heat collected more than 7½ tons along the border. “It’s changing how I see things.”",
+    dateLabel: "Sept 9–10",
   },
   {
     slug: "upenn-cinema",
@@ -210,6 +218,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "rye-beach",
+    image: "/events/rye-beach.jpg",
     title: "Rye Beach Cleanup",
     campus: "Rye, New Hampshire",
     state: "NH",
@@ -230,6 +239,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "alamo",
+    image: "/events/alamo.jpg",
     title: "The Alamo",
     campus: "San Antonio, TX",
     state: "TX",
@@ -241,6 +251,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "columbus-state",
+    image: "/events/columbus-state.jpg",
     title: "Columbus State University",
     campus: "Columbus State University, GA",
     state: "GA",
@@ -252,6 +263,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "utah-state",
+    image: "/events/utah-state.jpg",
     title: "Utah State University",
     campus: "Utah State University",
     state: "UT",
@@ -263,6 +275,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cal-state",
+    image: "/events/cal-state.jpg",
     title: "Cal State",
     campus: "Cal State \u2014 amphitheater & Riverwalk",
     state: "CA",
@@ -274,6 +287,7 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cattle-creek",
+    image: "/events/cattle-creek.jpg",
     title: "Cattle Creek Farm",
     campus: "Cattle Creek Farm, Bryan OH",
     state: "OH",

@@ -9,15 +9,23 @@ export const metadata: Metadata = {
 };
 
 function fmtDate(e: CgcEvent): { top: string; bottom: string } {
-  if (e.dateLabel) {
+  // Past events show Month + Year (the year is what matters in an archive);
+  // the full date or range lives on the event page.
+  if (e.dateLabel && (e.upcoming || !e.date)) {
     const [month, ...rest] = e.dateLabel.split(" ");
     return { top: month, bottom: rest.join(" ") };
   }
   if (e.date) {
     const d = new Date(e.date + "T00:00:00");
+    if (e.upcoming) {
+      return {
+        top: d.toLocaleDateString("en-US", { month: "short" }),
+        bottom: String(d.getDate()),
+      };
+    }
     return {
       top: d.toLocaleDateString("en-US", { month: "short" }),
-      bottom: String(d.getDate()),
+      bottom: String(d.getFullYear()),
     };
   }
   return e.upcoming ? { top: "TBA", bottom: "" } : { top: "\u2014", bottom: "" };
