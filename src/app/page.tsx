@@ -1,22 +1,27 @@
 import Link from "next/link";
 import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-react";
 
 const PROGRAMS = [
   {
     name: "Bridging the Divide",
     text: "Structured dialogues on the topics campuses avoid. No debate. No winners. Common ground.",
+    Icon: MessagesSquare,
   },
   {
     name: "Bridge to Tomorrow",
     text: "Service projects and immersive experiences — border cleanups, beach days, pop-up cinemas.",
+    Icon: HeartHandshake,
   },
   {
     name: "Bridge Works",
     text: "Mentorship and leadership training. Cam on Campus. Courageously American.",
+    Icon: GraduationCap,
   },
   {
     name: "Common Bridge",
     text: "Monthly online summits for young leaders across the country. Invitation only.",
+    Icon: Globe,
   },
 ];
 
@@ -131,6 +136,9 @@ export default function Home() {
               href="/programs"
               className="group bg-[var(--ground)] p-9 transition-colors hover:bg-[var(--panel)]"
             >
+              <span className="program-chip mb-5">
+                <p.Icon className="h-5 w-5" strokeWidth={1.75} />
+              </span>
               <h3 className="display text-3xl group-hover:text-[var(--signal)] transition-colors">
                 {p.name}
               </h3>
