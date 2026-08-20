@@ -22,13 +22,13 @@ export async function generateMetadata(props: {
       title: `${e.title} | Common Ground Campus`,
       description: e.blurb,
       type: "article",
-      images: e.image ? [{ url: e.image, width: 1280, height: 720 }] : undefined,
+      images: [{ url: `/og/events/${e.slug}.jpg`, width: 1200, height: 630 }],
     },
     twitter: {
-      card: e.image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: `${e.title} | Common Ground Campus`,
       description: e.blurb,
-      images: e.image ? [e.image] : undefined,
+      images: [`/og/events/${e.slug}.jpg`],
     },
   };
 }

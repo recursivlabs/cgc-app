@@ -30,6 +30,13 @@ export const metadata: Metadata = {
     title: "Common Ground Campus",
     description: "Dialogue over division. Bring an event to your campus.",
     type: "website",
+    images: [{ url: "/og/default.jpg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Common Ground Campus",
+    description: "Dialogue over division. Bring an event to your campus.",
+    images: ["/og/default.jpg"],
   },
 };
 
