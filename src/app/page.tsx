@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EVENTS, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
 
 const PROGRAMS = [
   {
@@ -72,6 +72,30 @@ export default function Home() {
                 ))}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The reel — as seen in the news ───────────────── */}
+      <section className="mx-auto max-w-6xl px-5 py-24">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.5fr_1fr]">
+          <div className="relative aspect-video border border-[var(--line)] bg-[var(--panel-2)]">
+            <iframe
+              src={`https://player.vimeo.com/video/${HERO_VIMEO_ID}?title=0&byline=0&portrait=0`}
+              className="absolute inset-0 h-full w-full"
+              allow="fullscreen; picture-in-picture"
+              title="Common Ground Campus — in the news"
+            />
+          </div>
+          <div>
+            <p className="eyebrow mb-4">In the news</p>
+            <h2 className="display text-[clamp(1.8rem,3.5vw,2.8rem)]">
+              See what we&apos;re <span className="text-[var(--signal)]">building</span>
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-[var(--ink-dim)]">
+              Two minutes on who we are and why this works — the events, the
+              students, and the coverage. Press play.
+            </p>
           </div>
         </div>
       </section>
