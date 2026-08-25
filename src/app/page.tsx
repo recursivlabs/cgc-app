@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { EVENTS, HERO_IMAGE, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import HeroWeave from "@/components/HeroWeave";
 import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-react";
 
 const PROGRAMS = [
@@ -32,21 +33,13 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative flex min-h-[82svh] items-end overflow-hidden">
-        <div className="hero-img">
-          <img
-            src={HERO_IMAGE}
-            alt="Two students in conversation on stage at a Common Ground Campus event"
-            fetchPriority="high"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
+      <section className="relative flex min-h-[86svh] items-center overflow-hidden">
+        <HeroWeave />
         <div className="hero-scrim" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-40">
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-24">
           <p className="eyebrow mb-5">On campuses across the country</p>
-          <h1 className="display text-[clamp(2.9rem,8vw,7rem)]">
+          <h1 className="display text-[clamp(3rem,9vw,8rem)]">
             Dialogue
             <br />
             over <span className="grad">division</span>
