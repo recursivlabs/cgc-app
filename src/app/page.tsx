@@ -32,37 +32,38 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative flex min-h-[92svh] items-end overflow-hidden">
-        <div className="hero-img">
-          <img
-            src={HERO_IMAGE}
-            alt="Students on stage before a full audience at a Common Ground Campus event"
-            fetchPriority="high"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-        <div className="hero-scrim" aria-hidden="true" />
+      <section className="hero relative overflow-hidden border-b border-[var(--line)]">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-28 lg:grid-cols-[1fr_1fr] lg:gap-14 lg:pb-24 lg:pt-36">
+          <div className="relative z-10">
+            <p className="eyebrow mb-5">On campuses across the country</p>
+            <h1 className="display text-[clamp(3rem,7.5vw,6.5rem)]">
+              Dialogue
+              <br />
+              over <span className="grad">division</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--ink-dim)]">
+              We help campuses and communities host events where people talk{" "}
+              <em className="not-italic font-bold text-[var(--ink)]">with</em> each other, not past
+              each other.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <Link href="/get-involved#host" className="btn btn-signal">
+                Host an event →
+              </Link>
+              <Link href="/auth/register" className="btn btn-ghost">
+                Become a #BridgeBuilder
+              </Link>
+            </div>
+          </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-40">
-          <p className="eyebrow mb-5">On campuses across the country</p>
-          <h1 className="display text-[clamp(3.4rem,11vw,9rem)]">
-            Dialogue
-            <br />
-            over <span className="grad">division</span>
-          </h1>
-          <p className="hero-sub mt-6 max-w-xl text-lg leading-relaxed">
-            We help campuses and communities host events where people talk{" "}
-            <em className="not-italic font-bold">with</em> each other, not past
-            each other.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-4">
-            <Link href="/get-involved#host" className="btn btn-signal">
-              Host an event →
-            </Link>
-            <Link href="/auth/register" className="btn btn-ghost">
-              Become a #BridgeBuilder
-            </Link>
+          <div className="hero-shot relative">
+            <img
+              src={HERO_IMAGE}
+              alt="Students on stage before a full audience at a Common Ground Campus event"
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+            />
           </div>
         </div>
       </section>

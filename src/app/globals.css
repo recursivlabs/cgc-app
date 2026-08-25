@@ -152,25 +152,38 @@ body {
   white-space: nowrap;
 }
 
-/* Hero image treatment — slow push-in, no third-party iframe */
-.hero-img {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+/* Hero — text left, photograph bleeding right. The photo is never cropped
+   from the top, so the students' faces are always visible. */
+.hero-shot {
+  position: relative;
 }
-.hero-img img {
+.hero-shot img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 12%;
-  animation: kenburns 24s ease-out both;
+  height: auto;
+  border: 1px solid var(--line);
+}
+@media (min-width: 1024px) {
+  .hero-shot {
+    margin-right: calc(50% - 50vw); /* bleed to the right edge */
+  }
+  .hero-shot img {
+    height: 68svh;
+    min-height: 460px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center top;
+    border: none;
+    border-left: 1px solid var(--line);
+  }
 }
 @keyframes kenburns {
-  from { transform: scale(1.12); }
+  from { transform: scale(1.06); }
   to { transform: scale(1); }
 }
+.hero-shot img { animation: kenburns 24s ease-out both; }
 @media (prefers-reduced-motion: reduce) {
-  .hero-img img { animation: none; }
+  .hero-shot img { animation: none; }
 }
 
 /* Event card media */
