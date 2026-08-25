@@ -152,38 +152,30 @@ body {
   white-space: nowrap;
 }
 
-/* Hero — text left, photograph bleeding right. The photo is never cropped
-   from the top, so the students' faces are always visible. */
-.hero-shot {
-  position: relative;
+/* Hero — full-bleed photograph. The source is wider (1.98) than the hero
+   box, so it crops horizontally on typical screens and the students' faces,
+   which sit in the upper third, are never cut. */
+.hero-img {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
-.hero-shot img {
-  display: block;
+.hero-img img {
   width: 100%;
-  height: auto;
-  border: 1px solid var(--line);
-}
-@media (min-width: 1024px) {
-  .hero-shot {
-    margin-right: calc(50% - 50vw); /* bleed to the right edge */
-  }
-  .hero-shot img {
-    height: 68svh;
-    min-height: 460px;
-    width: 100%;
-    object-fit: cover;
-    object-position: center top;
-    border: none;
-    border-left: 1px solid var(--line);
-  }
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
 }
 @keyframes kenburns {
-  from { transform: scale(1.06); }
+  from { transform: scale(1.07); }
   to { transform: scale(1); }
 }
-.hero-shot img { animation: kenburns 24s ease-out both; }
 @media (prefers-reduced-motion: reduce) {
-  .hero-shot img { animation: none; }
+  .hero-img img { animation: none; }
+}
+.hero-sub {
+  color: #e8e6e1;
+  text-shadow: 0 1px 12px rgba(10, 10, 12, 0.9), 0 0 2px rgba(10, 10, 12, 0.9);
 }
 
 /* Event card media */
@@ -233,5 +225,7 @@ button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
 .hero-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(10,10,12,0.55) 0%, rgba(10,10,12,0.35) 45%, var(--ground) 96%);
+  background:
+    linear-gradient(180deg, rgba(10,10,12,0.62) 0%, rgba(10,10,12,0.28) 34%, rgba(10,10,12,0.86) 74%, var(--ground) 99%),
+    linear-gradient(90deg, rgba(10,10,12,0.72) 0%, rgba(10,10,12,0.15) 62%, transparent 100%);
 }
