@@ -1,0 +1,119 @@
+<!doctype html><meta charset="utf-8">
+<style>
+  @font-face { font-family: Anton; src: url("../public/fonts/Anton.woff2") format("woff2"); }
+  @font-face { font-family: Geist; src: url("../public/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:630px; background:#0a0a0c; overflow:hidden; }
+  .wrap { position:relative; width:1200px; height:630px; }
+  canvas, .scrim, .rule, .content { position:absolute; }
+  canvas { inset:0; width:1200px; height:630px; }
+  .scrim { inset:0;
+    background:
+      linear-gradient(90deg, rgba(10,10,12,0.86) 0%, rgba(10,10,12,0.5) 34%, transparent 60%),
+      linear-gradient(180deg, rgba(10,10,12,0.6) 0%, transparent 22%, transparent 88%, rgba(10,10,12,0.6) 100%);
+  }
+  .rule { top:0; left:0; right:0; height:6px;
+    background:linear-gradient(90deg,#3aa6f5 0%,#8b7cf8 100%); }
+  .content { inset:0; padding:52px 60px; display:flex; flex-direction:column; }
+  .brand { display:flex; align-items:center; gap:16px; }
+  .brand img { width:46px; height:46px; }
+  .brand span { font-family:Anton; font-size:26px; letter-spacing:0.01em;
+    text-transform:uppercase; color:#f5f4f0; }
+  .brand b { color:#3aa6f5; font-weight:400; }
+  .mid { margin-top:auto; margin-bottom:auto; }
+  .eyebrow { font-family:Geist; font-size:16px; font-weight:600; letter-spacing:0.22em;
+    text-transform:uppercase; color:#3aa6f5; margin-bottom:18px; }
+  h1 { font-family:Anton; font-size:88px; line-height:0.92; text-transform:uppercase;
+    color:#f5f4f0; letter-spacing:0.01em; }
+  h1 em { font-style:normal;
+    background:linear-gradient(100deg,#3aa6f5 10%,#8b7cf8 90%);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  p { font-family:Geist; font-size:25px; font-weight:500; color:#dcdad5; margin-top:22px;
+    max-width:620px; line-height:1.4; }
+  .url { font-family:Geist; font-size:19px; font-weight:600; color:#6e6c68; }
+</style>
+<div class="wrap">
+  <canvas id="c" width="2400" height="1260"></canvas>
+  <div class="scrim"></div>
+  <div class="rule"></div>
+  <div class="content">
+    <div class="brand">
+      <img src="../public/logo.png" alt="">
+      <span>COMMON<b>GROUND</b>CAMPUS</span>
+    </div>
+    <div class="mid">
+      <div class="eyebrow">On campuses across the country</div>
+      <h1>Dialogue<br>over <em>division</em></h1>
+      <p>Events where people talk with each other, not past each other</p>
+    </div>
+    <div class="url">commongroundcampus.com</div>
+  </div>
+</div>
+<script>
+// Same bridge as the site hero, drawn once at the card's proportions.
+const c = document.getElementById('c'), x = c.getContext('2d');
+x.setTransform(2,0,0,2,0,0);
+const w = 1200, h = 630;
+const DECK = 0.72, TOWER = 0.34, T1 = 0.55, T2 = 0.93, FADE_A = 0.26, FADE_B = 0.48;
+const deckY = h*DECK, topY = deckY - h*TOWER, x1 = w*T1, x2 = w*T2;
+const mid = (x1+x2)/2, sagY = deckY - h*TOWER*0.11, anchorY = deckY + h*0.15;
+function cableY(px){
+  if (px < x1) return topY + (anchorY-topY)*Math.pow((x1-px)/x1, 1.35);
+  if (px > x2) return topY + (anchorY-topY)*Math.pow((px-x2)/(w-x2), 1.35);
+  const half=(x2-x1)/2, t=(px-mid)/half;
+  return sagY + (topY-sagY)*t*t;
+}
+function grad(a){
+  const g = x.createLinearGradient(0,0,w,0), m = mid/w;
+  g.addColorStop(0,'rgba(58,166,245,0)');
+  g.addColorStop(FADE_A,'rgba(58,166,245,0)');
+  g.addColorStop(FADE_B,`rgba(58,166,245,${a})`);
+  g.addColorStop(m,`rgba(226,240,255,${Math.min(1,a*1.35)})`);
+  g.addColorStop(0.97,`rgba(139,124,248,${a})`);
+  g.addColorStop(1,'rgba(139,124,248,0)');
+  return g;
+}
+function tower(tx){
+  const legs = Math.max(3, w*0.0035), footY = deckY + h*0.13, capY = topY - h*0.018;
+  x.beginPath();
+  x.moveTo(tx-legs,capY); x.lineTo(tx-legs,footY);
+  x.moveTo(tx+legs,capY); x.lineTo(tx+legs,footY);
+  x.stroke();
+  x.beginPath();
+  x.moveTo(tx-legs, topY+h*0.012); x.lineTo(tx+legs, topY+h*0.012);
+  x.moveTo(tx-legs, deckY-h*0.03); x.lineTo(tx+legs, deckY-h*0.03);
+  x.stroke();
+}
+x.lineCap='round'; x.lineJoin='round';
+x.strokeStyle=grad(0.34); x.lineWidth=1;
+const step=(x2-x1)/30;
+x.beginPath();
+for(let px=step; px<w; px+=step){ const y=cableY(px); if(y<deckY-3){ x.moveTo(px,y); x.lineTo(px,deckY);} }
+x.stroke();
+x.strokeStyle=grad(0.92); x.lineWidth=2;
+x.beginPath();
+for(let px=0; px<=w; px+=3){ const y=cableY(px); px===0?x.moveTo(px,y):x.lineTo(px,y); }
+x.stroke();
+x.strokeStyle=grad(0.8); x.lineWidth=1.8; tower(x1); tower(x2);
+x.strokeStyle=grad(0.95); x.lineWidth=2.4;
+x.beginPath(); x.moveTo(0,deckY); x.lineTo(w,deckY); x.stroke();
+x.strokeStyle=grad(0.22); x.lineWidth=1;
+x.beginPath(); x.moveTo(0,deckY+5); x.lineTo(w,deckY+5); x.stroke();
+// the light where the two crossings pass
+x.globalCompositeOperation='lighter';
+const gl = x.createRadialGradient(mid,deckY,0,mid,deckY,h*0.42);
+gl.addColorStop(0,'rgba(180,205,255,0.34)');
+gl.addColorStop(0.5,'rgba(130,160,255,0.09)');
+gl.addColorStop(1,'rgba(120,170,255,0)');
+x.fillStyle=gl; x.fillRect(0,0,w,h);
+function crossing(px,color){
+  const len=w*0.075, g=x.createLinearGradient(px-len,0,px+len,0);
+  g.addColorStop(0,'rgba(255,255,255,0)'); g.addColorStop(0.5,color); g.addColorStop(1,'rgba(255,255,255,0)');
+  x.strokeStyle=g; x.lineWidth=2.6;
+  x.beginPath(); x.moveTo(px-len,deckY); x.lineTo(px+len,deckY); x.stroke();
+}
+crossing(mid-w*0.02,'rgba(120,195,255,0.95)');
+crossing(mid+w*0.02,'rgba(168,150,255,0.95)');
+x.globalCompositeOperation='source-over';
+document.title = 'ready';
+</script>
