@@ -13,6 +13,8 @@ export interface CgcEvent {
   date?: string; // ISO start date when known
   dateLabel?: string; // human display, e.g. "Sept 4\u20135"
   image?: string; // /events/<slug>.jpg in /public
+  flyer?: string; // the event's own promotional flyer
+  venue?: string; // room / address from the flyer
   time?: string; // e.g. "8:00 pm ET"
   rsvp?: boolean; // upcoming events that take RSVPs
   inviteOnly?: boolean; // Common Bridge + Bridge Works are invitational
@@ -97,6 +99,8 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "ug",
+    flyer: "/events/flyers/ug.jpg",
+    venue: "Miller LC Building, Athens GA",
     image: "/events/ug.jpg",
     title: "University of Georgia",
     campus: "University of Georgia",
@@ -105,12 +109,12 @@ export const EVENTS: CgcEvent[] = [
     topic: "Race on campus",
     blurb:
       "Students with opposing views took the stage to talk about race, and found the concerns they shared.",
-    date: "2022-05-01",
-    dateLabel: "2022",
+    date: "2022-04-14",
     vimeoIds: ["716797965", "717618948", "717620232", "717621985", "717624247", "717624812"],
   },
   {
     slug: "uh",
+    flyer: "/events/flyers/uh.jpg",
     image: "/events/uh.jpg",
     title: "University of Houston",
     campus: "University of Houston",
@@ -120,10 +124,13 @@ export const EVENTS: CgcEvent[] = [
     blurb:
       "A dialogue on student debt that participants said was “much more fun” than the debate they expected.",
     date: "2022-11-15",
+    venue: "Farish Hall, Room 232, 3657 Cullen Blvd",
     vimeoIds: ["779667184", "779667477", "779667984", "779668424", "779689730"],
   },
   {
     slug: "wvu",
+    flyer: "/events/flyers/wvu.jpg",
+    venue: "Gluck Theater, 1550 University Ave, Morgantown WV",
     image: "/events/wvu.jpg",
     title: "West Virginia University",
     campus: "West Virginia University",
@@ -137,20 +144,23 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "mhs",
+    flyer: "/events/flyers/mhs.jpg",
+    venue: "PAC Lounge Stage Area, 851 Weymouth Rd, Medina OH",
     image: "/events/mhs.jpg",
-    title: "Medinah High School",
-    campus: "Medinah High School",
+    title: "Medina High School",
+    campus: "Medina High School",
     state: "OH",
     kind: "dialogue",
     topic: "Student rights",
     blurb:
       "Our first high school event. Four students tackled student rights in front of peers, teachers, and administrators.",
-    date: "2022-12-01",
-    dateLabel: "2022",
+    date: "2022-11-29",
     vimeoIds: ["783250951", "783251570", "783252308", "783252777", "783252971", "783253274"],
   },
   {
     slug: "hope-college",
+    flyer: "/events/flyers/hope-college.jpg",
+    venue: "Winants Auditorium, 263 College Ave, Holland MI",
     image: "/events/hope-college.jpg",
     date: "2023-11-14",
     title: "Hope College",
@@ -163,6 +173,8 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "txb",
+    flyer: "/events/flyers/txb.jpg",
+    venue: "Cameron County Precinct 1, TX",
     image: "/events/txb.jpg",
     title: "Texas Border Cleanup",
     campus: "Brownsville, TX",
@@ -172,13 +184,13 @@ export const EVENTS: CgcEvent[] = [
     blurb:
       "250+ students in 100-degree heat collected more than 7½ tons along the border. “It’s changing how I see things.”",
     date: "2023-09-09",
-    dateLabel: "Sept 2023",
+    dateLabel: "Sept 9\u201310, 2023",
   },
   {
     slug: "upenn-cinema",
-    date: "2024-05-01",
-    dateLabel: "2024",
-    image: "/events/upenn-cinema.jpg",
+    flyer: "/events/flyers/upenn-cinema.jpg",
+    venue: "Hall of Flags, 3417 Spruce St, Philadelphia PA",
+    date: "2024-04-08",
     title: "UPenn Pop-Up Cinema",
     campus: "University of Pennsylvania",
     state: "PA",
@@ -189,6 +201,9 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "rollins",
+    date: "2025-09-23",
+    flyer: "/events/flyers/rollins.jpg",
+    venue: "Rice Pavilion, Holt Ave, Winter Park FL",
     image: "/events/rollins.jpg",
     title: "Rollins College",
     campus: "Rollins College",
@@ -200,7 +215,9 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "cole-valley-cinema",
-    image: "/events/cole-valley-cinema.jpg",
+    date: "2024-05-21",
+    flyer: "/events/flyers/cole-valley-cinema.jpg",
+    venue: "Cole Valley Christian School, 200 E Carlton Ave, Meridian ID",
     title: "Cole Valley Pop-Up Cinema",
     campus: "Cole Valley Christian Schools",
     state: "ID",
@@ -210,8 +227,9 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "chicago-cleanup",
-    date: "2025-04-15",
-    dateLabel: "Spring 2025",
+    flyer: "/events/flyers/chicago-cleanup.jpg",
+    venue: "Loyola Beach, 1230 W Greenleaf Ave, Chicago",
+    date: "2025-04-12",
     image: "/events/chicago-cleanup.jpg",
     title: "Loyola Beach Cleanup",
     campus: "Northwestern U & Loyola U Chicago",
@@ -223,6 +241,8 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "rye-beach",
+    flyer: "/events/flyers/rye-beach.jpg",
+    venue: "Jenness Beach, Rye NH",
     date: "2023-04-15",
     image: "/events/rye-beach.jpg",
     title: "Rye Beach Cleanup",
@@ -298,6 +318,7 @@ export const EVENTS: CgcEvent[] = [
 ];
 
 export const HERO_VIMEO_ID = "755151294";
+export const HERO_IMAGE = "/events/hero-wvu.jpg";
 
 export function eventStates(): string[] {
   return [...new Set(EVENTS.map((e) => e.state).filter((s) => s !== "US"))].sort();

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import { EVENTS, HERO_IMAGE, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
 import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-react";
 
 const PROGRAMS = [
@@ -35,8 +35,8 @@ export default function Home() {
       <section className="relative flex min-h-[92svh] items-end overflow-hidden">
         <div className="hero-img">
           <img
-            src="/events/hero.jpg"
-            alt="Students in dialogue on stage at a Common Ground Campus event"
+            src={HERO_IMAGE}
+            alt="Students on stage before a full audience at a Common Ground Campus event"
             fetchPriority="high"
             loading="eager"
             decoding="async"

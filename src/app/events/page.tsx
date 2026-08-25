@@ -32,10 +32,11 @@ function fmtDate(e: CgcEvent): { top: string; bottom: string } {
 }
 
 function Thumb({ e }: { e: CgcEvent }) {
-  if (e.image) {
+  const src = e.image || e.flyer;
+  if (src) {
     return (
       <span className="relative block aspect-video w-full overflow-hidden bg-[var(--panel-2)]">
-        <img src={e.image} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover object-top" loading="lazy" />
         {e.vimeoIds?.length ? (
           <span className="absolute bottom-1.5 right-1.5 rounded-sm bg-[rgba(10,10,12,0.75)] px-1.5 py-0.5 text-[10px] font-bold text-white">
             ▶ {e.vimeoIds.length}

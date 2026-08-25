@@ -116,6 +116,20 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               />
             )}
 
+            {e.flyer && (
+              <div className={e.image ? "mt-10" : ""}>
+                <p className="eyebrow mb-5">Event flyer</p>
+                <a href={e.flyer} target="_blank" rel="noopener noreferrer" className="block">
+                  <img
+                    src={e.flyer}
+                    alt={`${e.title} event flyer`}
+                    className="max-h-[560px] w-auto border border-[var(--line)]"
+                    loading="lazy"
+                  />
+                </a>
+              </div>
+            )}
+
             {e.vimeoIds && e.vimeoIds.length > 0 && (
               <div className="mt-10">
                 <p className="eyebrow mb-5">Video highlights</p>
@@ -188,9 +202,20 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               <Fact label="Date">{dateText || "To be announced"}</Fact>
               {e.time && <Fact label="Time">{e.time}</Fact>}
               <Fact label="Location">
-                {e.campus}
-                {e.state !== "US" && e.campus !== e.title ? `, ${e.state}` : ""}
-                {e.state === "US" ? " (join from anywhere)" : ""}
+                {e.venue ? (
+                  <>
+                    {e.campus}
+                    <span className="mt-1 block text-[13px] font-normal text-[var(--ink-dim)]">
+                      {e.venue}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {e.campus}
+                    {e.state !== "US" && e.campus !== e.title ? `, ${e.state}` : ""}
+                    {e.state === "US" ? " (join from anywhere)" : ""}
+                  </>
+                )}
               </Fact>
               <Fact label="Program">{KIND_LABELS[e.kind]}</Fact>
               <Fact label="Cost">Free</Fact>
