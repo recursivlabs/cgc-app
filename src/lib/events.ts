@@ -317,6 +317,8 @@ export const EVENTS: CgcEvent[] = [
   },
 ];
 
+export const HERO_IMAGE = "/events/hero.jpg";
+
 export const HERO_VIMEO_ID = "755151294";
 
 export function eventStates(): string[] {

@@ -152,13 +152,17 @@ body {
   white-space: nowrap;
 }
 
-/* Hero visual: a room of people drawn on canvas. */
-.hero-crowd {
+/* Hero photograph, full bleed behind the copy. */
+.hero-img {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+}
+.hero-img img {
   width: 100%;
   height: 100%;
-  display: block;
+  object-fit: cover;
+  object-position: center 30%;
 }
 .hero-sub {
   color: #dcdad5;
@@ -213,16 +217,7 @@ button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(10,10,12,0.72) 0%, rgba(10,10,12,0.34) 30%, transparent 56%),
-    linear-gradient(180deg, var(--ground) 0%, transparent 20%, transparent 90%, rgba(10,10,12,0.34) 97%, var(--ground) 100%);
+    linear-gradient(180deg, rgba(10,10,12,0.62) 0%, rgba(10,10,12,0.28) 34%, rgba(10,10,12,0.86) 74%, var(--ground) 99%),
+    linear-gradient(90deg, rgba(10,10,12,0.72) 0%, rgba(10,10,12,0.15) 62%, transparent 100%);
 }
 
-/* On a narrow screen the copy fills the width, so the scrim darkens the
-   whole upper half instead of only the left side. */
-@media (max-width: 760px) {
-  .hero-scrim {
-    background:
-      linear-gradient(180deg, var(--ground) 0%, rgba(10,10,12,0.72) 20%, rgba(10,10,12,0.42) 48%, transparent 66%),
-      linear-gradient(180deg, transparent 92%, rgba(10,10,12,0.3) 97%, var(--ground) 100%);
-  }
-}

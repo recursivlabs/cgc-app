@@ -5,12 +5,13 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:1200px; height:630px; background:#0a0a0c; overflow:hidden; }
   .wrap { position:relative; width:1200px; height:630px; }
-  canvas, .scrim, .rule, .content { position:absolute; }
-  canvas { inset:0; width:1200px; height:630px; }
+  .shot, .scrim, .rule, .content { position:absolute; }
+  .shot { inset:0; }
+  .shot img { width:100%; height:100%; object-fit:cover; object-position:center 30%; }
   .scrim { inset:0;
     background:
-      linear-gradient(90deg, rgba(10,10,12,0.86) 0%, rgba(10,10,12,0.5) 34%, transparent 60%),
-      linear-gradient(180deg, rgba(10,10,12,0.6) 0%, transparent 22%, transparent 88%, rgba(10,10,12,0.6) 100%);
+      linear-gradient(180deg, rgba(10,10,12,0.62) 0%, rgba(10,10,12,0.3) 30%, rgba(10,10,12,0.9) 76%, #0a0a0c 100%),
+      linear-gradient(90deg, rgba(10,10,12,0.82) 0%, rgba(10,10,12,0.28) 58%, transparent 100%);
   }
   .rule { top:0; left:0; right:0; height:6px;
     background:linear-gradient(90deg,#3aa6f5 0%,#8b7cf8 100%); }
@@ -20,20 +21,20 @@
   .brand span { font-family:Anton; font-size:26px; letter-spacing:0.01em;
     text-transform:uppercase; color:#f5f4f0; }
   .brand b { color:#3aa6f5; font-weight:400; }
-  .mid { margin-top:auto; margin-bottom:auto; }
+  .mid { margin-top:auto; }
   .eyebrow { font-family:Geist; font-size:16px; font-weight:600; letter-spacing:0.22em;
     text-transform:uppercase; color:#3aa6f5; margin-bottom:18px; }
-  h1 { font-family:Anton; font-size:88px; line-height:0.92; text-transform:uppercase;
+  h1 { font-family:Anton; font-size:84px; line-height:0.92; text-transform:uppercase;
     color:#f5f4f0; letter-spacing:0.01em; }
   h1 em { font-style:normal;
     background:linear-gradient(100deg,#3aa6f5 10%,#8b7cf8 90%);
     -webkit-background-clip:text; background-clip:text; color:transparent; }
-  p { font-family:Geist; font-size:25px; font-weight:500; color:#dcdad5; margin-top:22px;
+  p { font-family:Geist; font-size:24px; font-weight:500; color:#e2e0db; margin-top:20px;
     max-width:620px; line-height:1.4; }
-  .url { font-family:Geist; font-size:19px; font-weight:600; color:#6e6c68; }
+  .url { font-family:Geist; font-size:19px; font-weight:600; color:#8d8b87; margin-top:26px; }
 </style>
 <div class="wrap">
-  <canvas id="c" width="2400" height="1260"></canvas>
+  <div class="shot"><img src="../public/events/hero.jpg" alt=""></div>
   <div class="scrim"></div>
   <div class="rule"></div>
   <div class="content">
@@ -45,110 +46,7 @@
       <div class="eyebrow">On campuses across the country</div>
       <h1>Dialogue<br>over <em>division</em></h1>
       <p>Events where people talk with each other, not past each other</p>
+      <div class="url">commongroundcampus.com</div>
     </div>
-    <div class="url">commongroundcampus.com</div>
   </div>
 </div>
-<script>
-// The same room as the site hero, drawn once at the card's proportions.
-const c = document.getElementById('c'), x = c.getContext('2d');
-x.setTransform(2,0,0,2,0,0);
-const w = 1200, h = 630, PI = Math.PI, BODY = '#07070a';
-const FADE_A = 0.3, FADE_B = 0.52;
-const stage = { y: h*0.62, s: h*0.19, mid: w*0.755 };
-stage.a = stage.mid - stage.s*0.66;
-stage.b = stage.mid + stage.s*0.66;
-
-function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6d2b79f5)>>>0;
-  let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t;
-  return ((t^(t>>>14))>>>0)/4294967296; }; }
-
-function beam(alpha){
-  const g = x.createLinearGradient(0,0,w,0), m = stage.mid/w;
-  g.addColorStop(0,'rgba(58,166,245,0)');
-  g.addColorStop(FADE_A,'rgba(58,166,245,0)');
-  g.addColorStop(FADE_B,`rgba(58,166,245,${alpha})`);
-  g.addColorStop(m,`rgba(232,242,255,${Math.min(1,alpha*1.5)})`);
-  g.addColorStop(0.97,`rgba(139,124,248,${alpha})`);
-  g.addColorStop(1,'rgba(139,124,248,0)');
-  return g;
-}
-function figure(cx, baseY, s, lean){
-  const headR=s*0.185, headX=cx+lean*headR*0.55, headY=baseY-s*0.6;
-  const shY=baseY-s*0.28, halfW=s*0.4;
-  x.beginPath();
-  x.moveTo(cx-halfW, baseY);
-  x.quadraticCurveTo(cx-halfW, shY+s*0.02, headX-headR*1.45, shY-s*0.02);
-  x.quadraticCurveTo(headX-headR*0.95, shY-s*0.09, headX+Math.cos(0.75*PI)*headR, headY+Math.sin(0.75*PI)*headR);
-  x.arc(headX, headY, headR, 0.75*PI, 2.25*PI, false);
-  x.quadraticCurveTo(headX+headR*0.95, shY-s*0.09, headX+headR*1.45, shY-s*0.02);
-  x.quadraticCurveTo(cx+halfW, shY+s*0.02, cx+halfW, baseY);
-  x.closePath();
-}
-function armPath(cx, baseY, s, side, lift){
-  const sx=cx+side*s*0.28, sy=baseY-s*0.24;
-  x.beginPath();
-  x.moveTo(sx,sy);
-  x.quadraticCurveTo(sx+side*s*0.2, sy-s*0.34, sx+side*s*(0.08+lift*0.07), sy-s*(0.28+lift*0.66));
-}
-function lit(path, rimAlpha, rimPx, stroke){
-  x.save(); x.translate(0,-rimPx); path();
-  if(stroke){ x.lineWidth=stroke; x.lineCap='round'; x.strokeStyle=beam(rimAlpha); x.stroke(); }
-  else { x.fillStyle=beam(rimAlpha); x.fill(); }
-  x.restore(); path();
-  if(stroke){ x.lineWidth=stroke; x.lineCap='round'; x.strokeStyle=BODY; x.stroke(); }
-  else { x.fillStyle=BODY; x.fill(); }
-}
-
-// the light in the room
-x.globalCompositeOperation='lighter';
-const gy = stage.y - stage.s*0.4;
-const pool = x.createRadialGradient(stage.mid, gy, 0, stage.mid, gy, h*0.62);
-pool.addColorStop(0,'rgba(190,212,255,0.26)');
-pool.addColorStop(0.4,'rgba(128,156,252,0.095)');
-pool.addColorStop(1,'rgba(110,160,255,0)');
-x.fillStyle=pool; x.fillRect(0,0,w,h);
-const wash = x.createLinearGradient(0, stage.y-h*0.02, 0, h);
-wash.addColorStop(0,'rgba(120,150,235,0.11)');
-wash.addColorStop(1,'rgba(90,120,220,0)');
-x.fillStyle=wash; x.fillRect(0, stage.y-h*0.02, w, h);
-x.globalCompositeOperation='source-over';
-
-// the lit edge of the stage
-const half = stage.s*3.4;
-const edge = x.createLinearGradient(stage.mid-half,0,stage.mid+half,0);
-edge.addColorStop(0,'rgba(58,166,245,0)');
-edge.addColorStop(0.5,'rgba(226,240,255,0.9)');
-edge.addColorStop(1,'rgba(139,124,248,0)');
-x.strokeStyle=edge; x.lineWidth=2;
-x.beginPath(); x.moveTo(stage.mid-half, stage.y); x.lineTo(stage.mid+half, stage.y); x.stroke();
-
-// the two people talking
-[{x:stage.a,lean:1},{x:stage.b,lean:-1}].forEach(p=>{
-  lit(()=>figure(p.x, stage.y, stage.s, p.lean), 1, Math.max(2, stage.s*0.032));
-});
-
-// the audience
-const rows = [
-  { base: 0.80, s: 0.115, gap: 0.62, rim: 0.5 },
-  { base: 0.90, s: 0.15,  gap: 0.66, rim: 0.75 },
-  { base: 1.02, s: 0.195, gap: 0.72, rim: 1 },
-];
-const r = rng(20260825);
-rows.forEach(row=>{
-  const s0 = h*row.s, step = s0*row.gap;
-  for(let px=-step; px<w+step; px+=step){
-    const lean = r()<0.16 ? (r()<0.5?-1:1) : 0;
-    const cx = px + (r()-0.5)*step*0.5;
-    const base = h*row.base + (r()-0.5)*s0*0.09;
-    const s = s0*(0.8+r()*0.42);
-    const rimPx = Math.max(1.8, s*0.036);
-    const hand = r()<0.16;
-    if (hand && row.rim>0.5 && cx > w*(FADE_B-0.06)) {
-      lit(()=>armPath(cx, base, s, r()<0.5?-1:1, 0.85), row.rim*0.45, rimPx*0.55, s*0.095);
-    }
-    lit(()=>figure(cx, base, s, lean), row.rim, rimPx);
-  }
-});
-document.title='ready';
-</script>
