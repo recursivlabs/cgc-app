@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { EVENTS, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
-import HeroBridge from "@/components/HeroBridge";
+import HeroCrowd from "@/components/HeroCrowd";
 import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-react";
 
 const PROGRAMS = [
@@ -34,7 +34,7 @@ export default function Home() {
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative flex min-h-[86svh] items-center overflow-hidden">
-        <HeroBridge />
+        <HeroCrowd />
         <div className="hero-scrim" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-24">
