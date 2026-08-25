@@ -318,7 +318,6 @@ export const EVENTS: CgcEvent[] = [
 ];
 
 export const HERO_VIMEO_ID = "755151294";
-export const HERO_IMAGE = "/events/hero-wvu.jpg";
 
 export function eventStates(): string[] {
   return [...new Set(EVENTS.map((e) => e.state).filter((s) => s !== "US"))].sort();
