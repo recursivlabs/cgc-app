@@ -23,12 +23,15 @@ export default function HeroWeave() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const STRANDS = 40;
-    const CX = 0.66; // where the strands agree, kept clear of the headline
     let w = 0;
     let h = 0;
     let dpr = 1;
     let raf = 0;
     let running = true;
+    // Where the strands agree. On a wide screen the seam sits right of the
+    // headline; on a narrow one the copy fills the width, so it drops below.
+    let CX = 0.66;
+    let CY = 0.5;
 
     function resize() {
       if (!canvas) return;
@@ -39,6 +42,9 @@ export default function HeroWeave() {
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const narrow = w < 760;
+      CX = narrow ? 0.58 : 0.66;
+      CY = narrow ? 0.78 : 0.5;
     }
 
     // How far a strand may stray from the centre line at a given x.
@@ -49,7 +55,7 @@ export default function HeroWeave() {
     }
 
     function draw(time: number) {
-      const cy = h / 2;
+      const cy = h * CY;
       const phase = reduced ? 0 : time / 5200;
 
       ctx!.clearRect(0, 0, w, h);

@@ -216,3 +216,13 @@ button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
     linear-gradient(90deg, rgba(10,10,12,0.92) 0%, rgba(10,10,12,0.62) 34%, transparent 58%),
     linear-gradient(180deg, var(--ground) 0%, transparent 18%, transparent 78%, var(--ground) 100%);
 }
+
+/* On a narrow screen the copy fills the width, so the scrim darkens the
+   whole upper half instead of only the left side. */
+@media (max-width: 760px) {
+  .hero-scrim {
+    background:
+      linear-gradient(180deg, var(--ground) 0%, rgba(10,10,12,0.88) 22%, rgba(10,10,12,0.72) 52%, transparent 74%),
+      linear-gradient(180deg, transparent 82%, var(--ground) 100%);
+  }
+}
