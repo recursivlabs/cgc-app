@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSessionUser } from "@/lib/session";
 import { query } from "@/lib/db";
 import { EVENTS, KIND_LABELS } from "@/lib/events";
+import { isAdmin } from "@/lib/admin";
 import LogoutButton from "./LogoutButton";
 import ClaimForm from "./ClaimForm";
 
@@ -84,6 +85,9 @@ export default async function MemberPage() {
       <div className="mt-12 flex flex-wrap gap-4">
         <Link href="/events" className="btn btn-signal">Browse events →</Link>
         <Link href="/declaration" className="btn btn-ghost">Sign the Declaration</Link>
+        {isAdmin(user.email) && (
+          <Link href="/admin" className="btn btn-ghost">Inbox →</Link>
+        )}
         <LogoutButton />
       </div>
     </section>
