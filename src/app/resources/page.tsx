@@ -35,7 +35,7 @@ const RESOURCES = [
     title: "The Philadelphia Declaration",
     tag: "Founding document",
     text: "A modern consensus document drafted by 40+ scholars and leaders, including our founders, reasserting the principles we share.",
-    cta: { label: "Sign On 250", href: "https://sign-on250.org" },
+    cta: { label: "Read and sign", href: "/declaration" },
   },
 ];
 

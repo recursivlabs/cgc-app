@@ -99,9 +99,6 @@ export default function DeclarationPage() {
               Signing says you have read it and you stand behind it. It is not a membership
               and it does not sign you up for anything.
             </p>
-            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-faint)]">
-              Becoming a #BridgeBuilder is separate. You can do one, the other, or both.
-            </p>
           </div>
           <div className="card p-8">
             <SignForm />

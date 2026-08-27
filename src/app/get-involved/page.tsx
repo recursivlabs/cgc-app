@@ -1,56 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import HostForm from "./HostForm";
+import InquiryForm from "@/components/InquiryForm";
+import { INQUIRIES } from "@/lib/inquiries";
 
 export const metadata: Metadata = {
   title: "Get Involved",
   description:
-    "Host a Common Ground Campus event, nominate your school, become a #BridgeBuilder, or partner with us.",
+    "Host a Common Ground Campus event, nominate your school, become a #BridgeBuilder, mentor a student, or sign the Philadelphia Declaration.",
 };
 
-const NOMINATE_MAILTO =
-  "mailto:felisa@commongroundcampus.com?subject=" +
-  encodeURIComponent("School nomination") +
-  "&body=" +
-  encodeURIComponent(
-    "Hi Felisa,\n\nI'd like to nominate a school for a Common Ground Campus event.\n\nSchool:\nCity, state:\nWhy this campus:\n"
-  );
-
-interface Way {
-  id: string;
-  title: string;
-  text: string;
-  cta: { label: string; href: string };
-  external?: boolean;
-  featured?: boolean;
-}
-
-const WAYS: Way[] = [
+const SECTIONS = [
   {
-    id: "join",
-    title: "Become a #BridgeBuilder",
-    text: "Join the movement. You get your member number and a certificate with your name on it, the digital booklet free, and word of events near you.",
-    cta: { label: "Join free", href: "/auth/register" },
-  },
-  {
-    id: "sign",
-    title: "Sign the Philadelphia Declaration",
-    text: "A modern reading of the principles in the Declaration of Independence. Read it, weigh it, and add your name. We ask for nothing but your name and date of birth.",
-    cta: { label: "Read and sign", href: "/declaration" },
+    id: "host",
+    kind: "host",
+    title: "Host an event",
+    lead: "The main way this works: you invite us in. We plan it, coordinate it, and pay for it. Your group brings the people. Any campus, any community, any divisive topic.",
+    note: "Tell us who you are and what you have in mind. That is all we need to start.",
   },
   {
     id: "nominate",
+    kind: "nominate",
     title: "Nominate your school",
-    text: "Know a campus that needs this? Tell us. Universities reach out through this every year.",
-    cta: { label: "Nominate a school", href: NOMINATE_MAILTO },
-    external: true,
+    lead: "Know a campus that needs this? Tell us. Universities reach out through this every year, and some of our best events started with one student naming a school.",
+    note: "You do not have to go there. You just have to think it belongs on the list.",
   },
   {
     id: "mentor",
+    kind: "partner",
     title: "Mentor or partner",
-    text: "Bridge Works runs on people who reach back: mentors, sponsors, and partner organizations who open doors for young leaders.",
-    cta: { label: "Reach out", href: "mailto:felisa@commongroundcampus.com?subject=Mentoring%20%2F%20partnership" },
-    external: true,
+    lead: "Bridge Works runs on people who reach back: mentors, sponsors, and partner organizations who open doors for young leaders.",
+    note: "Tell us how you want to help and we will find the student who needs it.",
   },
 ];
 
@@ -68,47 +47,49 @@ export default function GetInvolved() {
         </p>
       </section>
 
-      <section id="host" className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
-          <div>
-            <h2 className="display text-[clamp(1.9rem,4vw,3rem)] leading-[0.98]">Host an event</h2>
-            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-dim)]">
-              The main way this works: you invite us in. We plan it, coordinate it, and pay
-              for it. Your group brings the people. Any campus, any community, any divisive
-              topic.
+      {/* ── Two ways in that don't need a form ───────────── */}
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div id="join" className="card p-8">
+            <h2 className="display text-2xl">Become a #BridgeBuilder</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--ink-dim)]">
+              You get your member number and a certificate with your name on it, the digital
+              booklet free, and word of events near you.
             </p>
-            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-faint)]">
-              Tell us who you are and what you have in mind. That is all we need to start.
-            </p>
+            <Link href="/auth/register" className="btn btn-signal mt-6">Join free →</Link>
           </div>
-          <HostForm />
+          <div id="sign" className="card p-8">
+            <h2 className="display text-2xl">Sign the Philadelphia Declaration</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--ink-dim)]">
+              A modern reading of the principles in the Declaration of Independence. Read it,
+              weigh it, and add your name. We ask for nothing but your name and date of birth.
+            </p>
+            <Link href="/declaration" className="btn btn-ghost mt-6">Read and sign →</Link>
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-5 pb-28">
-        <p className="eyebrow mb-7">Other ways in</p>
-        <div className="grid gap-6 md:grid-cols-2">
-          {WAYS.map((w) => (
-            <div
-              key={w.id}
-              id={w.id}
-              className={`card p-9 ${w.featured ? "md:col-span-2 border-[var(--signal)]" : ""}`}
-            >
-              <h2 className={`display ${w.featured ? "text-4xl" : "text-3xl"}`}>{w.title}</h2>
-              <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--ink-dim)]">{w.text}</p>
-              {w.external ? (
-                <a href={w.cta.href} className={`btn mt-6 ${w.featured ? "btn-signal" : "btn-ghost"}`}>
-                  {w.cta.label} →
-                </a>
-              ) : (
-                <Link href={w.cta.href} className={`btn mt-6 ${w.featured ? "btn-signal" : "btn-ghost"}`}>
-                  {w.cta.label} →
-                </Link>
-              )}
+      {/* ── The three that do ────────────────────────────── */}
+      {SECTIONS.map((s, i) => (
+        <section
+          key={s.id}
+          id={s.id}
+          className={`border-t border-[var(--line)] ${i % 2 ? "bg-[var(--panel)]" : ""}`}
+        >
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-20 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
+            <div>
+              <h2 className="display text-[clamp(1.9rem,4vw,3rem)] leading-[0.98]">{s.title}</h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-dim)]">
+                {s.lead}
+              </p>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-faint)]">
+                {s.note}
+              </p>
             </div>
-          ))}
-        </div>
-      </section>
+            <InquiryForm spec={INQUIRIES[s.kind]} />
+          </div>
+        </section>
+      ))}
     </>
   );
 }

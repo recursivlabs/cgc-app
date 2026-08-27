@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { EVENTS, KIND_LABELS, getEvent, type CgcEvent } from "@/lib/events";
 import RsvpButton from "@/components/RsvpButton";
 import ShareButton from "@/components/ShareButton";
+import EventQuestion from "@/components/EventQuestion";
 
 export function generateStaticParams() {
   return EVENTS.map((e) => ({ slug: e.slug }));
@@ -240,15 +241,7 @@ export default async function EventPage(props: { params: Promise<{ slug: string 
               )}
             </div>
 
-            <p className="mt-4 px-1 text-[13px] leading-relaxed text-[var(--ink-faint)]">
-              Questions? Email{" "}
-              <a
-                href={`mailto:felisa@commongroundcampus.com?subject=${encodeURIComponent(`Question about ${e.title}`)}`}
-                className="font-semibold text-[var(--ink-dim)] hover:text-[var(--ink)]"
-              >
-                felisa@commongroundcampus.com
-              </a>
-            </p>
+            <EventQuestion title={e.title} />
           </aside>
         </div>
       </section>

@@ -21,6 +21,11 @@
 html {
   scroll-behavior: smooth;
 }
+/* The header is fixed, so an anchor must stop short of it and land on the
+   heading rather than tucking it underneath. */
+[id] {
+  scroll-margin-top: 104px;
+}
 body {
   background: var(--ground);
   color: var(--ink);

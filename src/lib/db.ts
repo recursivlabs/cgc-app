@@ -59,6 +59,22 @@ async function ensureSchema(): Promise<void> {
     )
   `);
 
+  // Every "get in touch" form on the site lands here, told apart by kind,
+  // so Felisa reads one list instead of chasing her inbox.
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS inquiries (
+      id SERIAL PRIMARY KEY,
+      kind TEXT NOT NULL,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      organization TEXT,
+      location TEXT,
+      detail TEXT,
+      message TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
   await db.query(`
     CREATE TABLE IF NOT EXISTS host_requests (
       id SERIAL PRIMARY KEY,
@@ -70,6 +86,14 @@ async function ensureSchema(): Promise<void> {
       message TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
+  `);
+
+  // Host requests predate the shared table. Move them across once.
+  await db.query(`
+    INSERT INTO inquiries (kind, name, email, organization, location, detail, message, created_at)
+    SELECT 'host', name, email, organization, location, event_type, message, created_at
+    FROM host_requests
+    WHERE NOT EXISTS (SELECT 1 FROM inquiries WHERE kind = 'host')
   `);
 
   ready = true;
