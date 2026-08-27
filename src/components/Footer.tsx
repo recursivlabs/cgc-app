@@ -26,6 +26,7 @@ export default function Footer() {
               <li><Link className="text-[var(--ink-dim)] hover:text-[var(--ink)]" href="/events">Events</Link></li>
               <li><Link className="text-[var(--ink-dim)] hover:text-[var(--ink)]" href="/get-involved">Get Involved</Link></li>
               <li><Link className="text-[var(--ink-dim)] hover:text-[var(--ink)]" href="/resources">Resources</Link></li>
+              <li><Link className="text-[var(--ink-dim)] hover:text-[var(--ink)]" href="/declaration">Philadelphia Declaration</Link></li>
             </ul>
           </div>
 

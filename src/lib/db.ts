@@ -18,7 +18,9 @@ function getPool(): Pool {
 
 async function ensureSchema(): Promise<void> {
   if (ready) return;
-  await getPool().query(`
+  const db = getPool();
+
+  await db.query(`
     CREATE TABLE IF NOT EXISTS rsvps (
       id SERIAL PRIMARY KEY,
       event_id TEXT NOT NULL,
@@ -30,6 +32,46 @@ async function ensureSchema(): Promise<void> {
       UNIQUE(event_id, email)
     )
   `);
+
+  // Member numbers carry on from the 112 people already in Common Bridge.
+  await db.query(`CREATE SEQUENCE IF NOT EXISTS member_number_seq START 112`);
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS members (
+      id SERIAL PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      member_number INTEGER NOT NULL UNIQUE DEFAULT nextval('member_number_seq'),
+      email_optin BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  // The Philadelphia Declaration count carries on from the signatures already
+  // gathered on paper. Name and date of birth only: nothing else is collected.
+  await db.query(`CREATE SEQUENCE IF NOT EXISTS signature_number_seq START 1200`);
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS declaration_signatures (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      birth_date DATE NOT NULL,
+      signature_number INTEGER NOT NULL UNIQUE DEFAULT nextval('signature_number_seq'),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS host_requests (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      organization TEXT,
+      location TEXT,
+      event_type TEXT NOT NULL,
+      message TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
   ready = true;
 }
 

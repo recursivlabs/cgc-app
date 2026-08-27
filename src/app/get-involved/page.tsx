@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import HostForm from "./HostForm";
 
 export const metadata: Metadata = {
   title: "Get Involved",
   description:
     "Host a Common Ground Campus event, nominate your school, become a #BridgeBuilder, or partner with us.",
 };
-
-const HOST_MAILTO =
-  "mailto:felisa@commongroundcampus.com?subject=" +
-  encodeURIComponent("Host an event at my campus") +
-  "&body=" +
-  encodeURIComponent(
-    "Hi Felisa,\n\nI'd like to bring a Common Ground Campus event to my campus or community.\n\nSchool / organization:\nCity, state:\nTopic idea (optional):\nBest way to reach me:\n"
-  );
 
 const NOMINATE_MAILTO =
   "mailto:felisa@commongroundcampus.com?subject=" +
@@ -34,18 +27,16 @@ interface Way {
 
 const WAYS: Way[] = [
   {
-    id: "host",
-    title: "Host an event",
-    text: "The main way this works: you invite us in. We plan it, coordinate it, and pay for it. Your group brings the people. Any campus, any community, any divisive topic.",
-    cta: { label: "Start the conversation", href: HOST_MAILTO },
-    external: true,
-    featured: true,
-  },
-  {
     id: "join",
     title: "Become a #BridgeBuilder",
-    text: "Join the movement. You'll hear about events near you, get invited to Common Bridge summits, and connect with young leaders across the country.",
+    text: "Join the movement. You get your member number and a certificate with your name on it, the digital booklet free, and word of events near you.",
     cta: { label: "Join free", href: "/auth/register" },
+  },
+  {
+    id: "sign",
+    title: "Sign the Philadelphia Declaration",
+    text: "A modern reading of the principles in the Declaration of Independence. Read it, weigh it, and add your name. We ask for nothing but your name and date of birth.",
+    cta: { label: "Read and sign", href: "/declaration" },
   },
   {
     id: "nominate",
@@ -77,7 +68,25 @@ export default function GetInvolved() {
         </p>
       </section>
 
+      <section id="host" className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
+          <div>
+            <h2 className="display text-[clamp(1.9rem,4vw,3rem)] leading-[0.98]">Host an event</h2>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-dim)]">
+              The main way this works: you invite us in. We plan it, coordinate it, and pay
+              for it. Your group brings the people. Any campus, any community, any divisive
+              topic.
+            </p>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-faint)]">
+              Tell us who you are and what you have in mind. That is all we need to start.
+            </p>
+          </div>
+          <HostForm />
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-5 pb-28">
+        <p className="eyebrow mb-7">Other ways in</p>
         <div className="grid gap-6 md:grid-cols-2">
           {WAYS.map((w) => (
             <div

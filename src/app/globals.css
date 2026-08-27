@@ -221,3 +221,60 @@ button.card-media:hover .play-badge { background: rgba(10, 10, 12, 0.05); }
     linear-gradient(90deg, rgba(10,10,12,0.72) 0%, rgba(10,10,12,0.15) 62%, transparent 100%);
 }
 
+/* Certificate: the reward card for joining or signing. */
+.cert {
+  position: relative;
+  padding: 2px;
+  background: linear-gradient(135deg, #3aa6f5 0%, #8b7cf8 52%, rgba(58,166,245,0.25) 100%);
+}
+.cert-inner {
+  background:
+    radial-gradient(120% 90% at 78% 0%, rgba(58,166,245,0.14) 0%, transparent 62%),
+    var(--panel);
+  padding: clamp(26px, 4.5vw, 44px);
+}
+.cert-no {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  line-height: 1;
+  background: linear-gradient(100deg, #3aa6f5 10%, #8b7cf8 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* A running tally, shown next to the sign form. */
+.tally {
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 0.9;
+  background: linear-gradient(100deg, #3aa6f5 10%, #8b7cf8 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.form-note {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 11px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.form-error {
+  border: 1px solid var(--signal);
+  background: rgba(58, 166, 245, 0.09);
+  padding: 10px 13px;
+  font-size: 13px;
+  color: var(--signal);
+}
