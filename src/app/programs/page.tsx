@@ -31,7 +31,7 @@ const PROGRAMS = [
     tag: "Mentorship & training",
     Icon: GraduationCap,
     text: "Leadership training for the students who step up. Cam on Campus teaches interviewing and editing on real streets. The Courageously American vodcast gives young voices a platform. Mentors open doors: referrals, publications, career introductions.",
-    cta: { label: "Apply for mentorship", href: "/get-involved" },
+    cta: { label: "Apply for mentorship", href: "/get-involved#mentor" },
   },
   {
     id: "common-bridge",
