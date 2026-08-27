@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
+import { notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,17 @@ export async function POST(req: NextRequest) {
     );
 
     const row = res.rows[0];
+
+    void notify({
+      headline: "Someone signed the Philadelphia Declaration",
+      subject: "a new Declaration signature",
+      fields: [
+        ["Name", trimmed],
+        ["Signature number", `No. ${row.signature_number}`],
+        ["Date of birth", birthDate],
+      ],
+    }).catch(() => {});
+
     return NextResponse.json({
       name: trimmed,
       number: Number(row.signature_number),

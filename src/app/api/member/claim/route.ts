@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
+import { notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,19 @@ export async function POST(req: NextRequest) {
     );
 
     const row = res.rows[0];
+
+    void notify({
+      headline: "Someone became a #BridgeBuilder",
+      subject: "a new #BridgeBuilder",
+      replyTo: user.email,
+      fields: [
+        ["Name", row.name],
+        ["Email", user.email],
+        ["Member number", `No. ${row.member_number}`],
+        ["Wants email updates", emailOptin !== false ? "Yes" : "No"],
+      ],
+    }).catch(() => {});
+
     return NextResponse.json({
       name: row.name,
       number: Number(row.member_number),

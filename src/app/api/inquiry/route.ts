@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getInquiry } from "@/lib/inquiries";
+import { notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,27 @@ export async function POST(req: NextRequest) {
         message || null,
       ]
     );
+
+    const HEADLINE: Record<string, string> = {
+      host: "Someone wants to host an event",
+      nominate: "Someone nominated a school",
+      partner: "Someone wants to mentor or partner",
+      event: "Someone asked about an event",
+    };
+
+    void notify({
+      headline: HEADLINE[spec.kind] || "Someone wrote in",
+      subject: HEADLINE[spec.kind] || "a new message",
+      replyTo: email,
+      fields: [
+        ["Name", name],
+        ["Email", email],
+        [spec.orgLabel || "Organization", organization],
+        [spec.locationLabel || "Location", location],
+        [spec.detailLabel || (context ? "Event" : "Detail"), detail || context],
+      ],
+      body: message,
+    }).catch(() => {});
 
     return NextResponse.json({ success: true });
   } catch (error) {
