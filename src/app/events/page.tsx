@@ -48,7 +48,7 @@ function Thumb({ e }: { e: CgcEvent }) {
   return (
     <span className="flex aspect-video w-full flex-col items-center justify-center gap-1 bg-[var(--panel-2)] px-2 text-center">
       <span className="display text-[13px] leading-tight text-[var(--ink-dim)]">{e.title}</span>
-      <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-faint)]">US250 Tour</span>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-faint)]">{KIND_LABELS[e.kind]}</span>
     </span>
   );
 }
