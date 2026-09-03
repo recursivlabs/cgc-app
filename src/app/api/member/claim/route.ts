@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
@@ -20,11 +21,11 @@ export async function POST(req: NextRequest) {
     }
 
     const res = await query(
-      `INSERT INTO members (email, name, email_optin)
-       VALUES ($1, $2, $3)
+      `INSERT INTO members (email, name, email_optin, share_slug)
+       VALUES ($1, $2, $3, $4)
        ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, email_optin = EXCLUDED.email_optin
-       RETURNING member_number, name, created_at`,
-      [user.email, trimmed, emailOptin !== false]
+       RETURNING member_number, name, share_slug, created_at`,
+      [user.email, trimmed, emailOptin !== false, randomBytes(8).toString("base64url")]
     );
 
     const row = res.rows[0];
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       name: row.name,
       number: Number(row.member_number),
+      slug: row.share_slug,
       date: new Date(row.created_at).toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",

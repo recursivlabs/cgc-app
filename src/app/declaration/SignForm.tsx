@@ -1,64 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Download, Link2, Loader2, Share2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Certificate from "@/components/Certificate";
+import CertActions from "@/components/CertActions";
 
 interface Signed {
   name: string;
   number: number;
   date: string;
   slug?: string;
-}
-
-function ShareLink({ slug, name, number }: { slug: string; name: string; number: number }) {
-  const [copied, setCopied] = useState(false);
-  const [canShare, setCanShare] = useState(false);
-
-  useEffect(() => {
-    setCanShare(typeof navigator !== "undefined" && !!navigator.share);
-  }, []);
-
-  async function handleShare() {
-    const url = `${window.location.origin}/declaration/s/${slug}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${name} signed the Philadelphia Declaration`,
-          text: `I am signatory No. ${number}. Read it and add your name.`,
-          url,
-        });
-        return;
-      } catch {
-        /* user dismissed - fall through to copy */
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable */
-    }
-  }
-
-  return (
-    <button type="button" onClick={handleShare} className="btn btn-signal justify-center">
-      {copied ? (
-        <>
-          <Check className="h-4 w-4" /> Link copied
-        </>
-      ) : canShare ? (
-        <>
-          <Share2 className="h-4 w-4" /> Share your link
-        </>
-      ) : (
-        <>
-          <Link2 className="h-4 w-4" /> Copy your link
-        </>
-      )}
-    </button>
-  );
 }
 
 export default function SignForm() {
@@ -113,15 +64,14 @@ export default function SignForm() {
         />
         {signed.slug ? (
           <>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <a
-                href={`/api/og/sig/${signed.slug}?dl=1`}
-                download={`philadelphia-declaration-no-${signed.number}.png`}
-                className="btn btn-ghost justify-center"
-              >
-                <Download className="h-4 w-4" /> Save image
-              </a>
-              <ShareLink slug={signed.slug} name={signed.name} number={signed.number} />
+            <div className="mt-6">
+              <CertActions
+                imageHref={`/api/og/sig/${signed.slug}?dl=1`}
+                sharePath={`/declaration/s/${signed.slug}`}
+                shareTitle={`${signed.name} signed the Philadelphia Declaration`}
+                shareText={`I am signatory No. ${signed.number}. Read it and add your name.`}
+                downloadName={`philadelphia-declaration-no-${signed.number}.png`}
+              />
             </div>
             <p className="mt-5 text-sm leading-relaxed text-[var(--ink-dim)]">
               Anyone who opens your link sees your certificate, reads the

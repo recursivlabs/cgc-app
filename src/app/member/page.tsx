@@ -17,13 +17,14 @@ export default async function MemberPage() {
   let existing = null;
   try {
     const res = await query(
-      `SELECT name, member_number, created_at FROM members WHERE email = $1`,
+      `SELECT name, member_number, share_slug, created_at FROM members WHERE email = $1`,
       [user.email]
     );
     if (res.rows[0]) {
       existing = {
         name: res.rows[0].name as string,
         number: Number(res.rows[0].member_number),
+        slug: (res.rows[0].share_slug as string) || undefined,
         date: new Date(res.rows[0].created_at).toLocaleDateString("en-US", {
           month: "long",
           day: "numeric",

@@ -42,9 +42,19 @@ async function ensureSchema(): Promise<void> {
       name TEXT NOT NULL,
       member_number INTEGER NOT NULL UNIQUE DEFAULT nextval('member_number_seq'),
       email_optin BOOLEAN NOT NULL DEFAULT TRUE,
+      share_slug TEXT UNIQUE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+
+  // A membership can be shared by link, like a signature. Random slugs so
+  // nobody can walk the member list by counting up.
+  await db.query(`ALTER TABLE members ADD COLUMN IF NOT EXISTS share_slug TEXT UNIQUE`);
+  await db.query(
+    `UPDATE members
+     SET share_slug = substr(md5(random()::text || id::text || clock_timestamp()::text), 1, 12)
+     WHERE share_slug IS NULL`
+  );
 
   // The Philadelphia Declaration count carries on from the signatures already
   // gathered on paper. Name and date of birth only: nothing else is collected.

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import Certificate from "@/components/Certificate";
+import CertActions from "@/components/CertActions";
 
 interface Claimed {
   name: string;
   number: number;
   date: string;
+  slug?: string;
 }
 
 export default function ClaimForm({ existing }: { existing: Claimed | null }) {
@@ -48,9 +50,26 @@ export default function ClaimForm({ existing }: { existing: Claimed | null }) {
           line="Somebody has to go first for anything good to happen. On this campus, that is you."
           date={claimed.date}
         />
-        <p className="mt-6 text-sm leading-relaxed text-[var(--ink-dim)]">
-          Take a screenshot and send it to someone who should join too.
-        </p>
+        {claimed.slug ? (
+          <>
+            <div className="mt-6">
+              <CertActions
+                imageHref={`/api/og/member/${claimed.slug}?dl=1`}
+                sharePath={`/member/s/${claimed.slug}`}
+                shareTitle={`${claimed.name} is a #BridgeBuilder`}
+                shareText={`I am #BridgeBuilder No. ${claimed.number} at Common Ground Campus. Join me.`}
+                downloadName={`bridgebuilder-no-${claimed.number}.png`}
+              />
+            </div>
+            <p className="mt-5 text-sm leading-relaxed text-[var(--ink-dim)]">
+              Anyone who opens your link sees your certificate and can join too.
+            </p>
+          </>
+        ) : (
+          <p className="mt-6 text-sm leading-relaxed text-[var(--ink-dim)]">
+            Take a screenshot and send it to someone who should join too.
+          </p>
+        )}
       </div>
     );
   }
