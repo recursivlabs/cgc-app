@@ -113,12 +113,13 @@ export async function GET(
               </div>
               <div
                 style={{
+                  display: "flex",
                   fontFamily: "Anton",
                   fontSize: 58,
                   color: BLUE,
                 }}
               >
-                No. {number}
+                {`No. ${number}`}
               </div>
             </div>
 

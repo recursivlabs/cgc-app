@@ -39,7 +39,7 @@ export const EVENTS: CgcEvent[] = [
     topic: "Youth leadership",
     blurb:
       "The first monthly forum for past and present CGC leaders across the country. Invitation only. Members can invite others.",
-    upcoming: true,
+    upcoming: false,
     date: "2026-08-20",
     time: "8:00 pm ET",
     rsvp: true,
