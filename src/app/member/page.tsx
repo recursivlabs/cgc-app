@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessionUser } from "@/lib/session";
 import { query } from "@/lib/db";
-import { EVENTS, KIND_LABELS } from "@/lib/events";
+import { KIND_LABELS, upcomingEvents } from "@/lib/events";
 import { isAdmin } from "@/lib/admin";
 import LogoutButton from "./LogoutButton";
 import ClaimForm from "./ClaimForm";
@@ -36,7 +36,7 @@ export default async function MemberPage() {
     console.error("Member lookup error:", error);
   }
 
-  const upcoming = EVENTS.filter((e) => e.upcoming);
+  const upcoming = upcomingEvents();
 
   return (
     <section className="mx-auto max-w-4xl px-5 pb-28 pt-36">
