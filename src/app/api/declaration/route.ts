@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { notify } from "@/lib/notify";
@@ -37,10 +38,10 @@ export async function POST(req: NextRequest) {
     }
 
     const res = await query(
-      `INSERT INTO declaration_signatures (name, birth_date)
-       VALUES ($1, $2)
-       RETURNING signature_number, created_at`,
-      [trimmed, birthDate]
+      `INSERT INTO declaration_signatures (name, birth_date, share_slug)
+       VALUES ($1, $2, $3)
+       RETURNING signature_number, share_slug, created_at`,
+      [trimmed, birthDate, randomBytes(8).toString("base64url")]
     );
 
     const row = res.rows[0];
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       name: trimmed,
       number: Number(row.signature_number),
+      slug: row.share_slug,
       date: new Date(row.created_at).toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",

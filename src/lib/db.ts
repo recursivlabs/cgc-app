@@ -55,9 +55,21 @@ async function ensureSchema(): Promise<void> {
       name TEXT NOT NULL,
       birth_date DATE NOT NULL,
       signature_number INTEGER NOT NULL UNIQUE DEFAULT nextval('signature_number_seq'),
+      share_slug TEXT UNIQUE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+
+  // A signature can be shared by link. The slug is random so nobody can walk
+  // the list of signers by counting up.
+  await db.query(
+    `ALTER TABLE declaration_signatures ADD COLUMN IF NOT EXISTS share_slug TEXT UNIQUE`
+  );
+  await db.query(
+    `UPDATE declaration_signatures
+     SET share_slug = substr(md5(random()::text || id::text || clock_timestamp()::text), 1, 12)
+     WHERE share_slug IS NULL`
+  );
 
   // Every "get in touch" form on the site lands here, told apart by kind,
   // so Felisa reads one list instead of chasing her inbox.
