@@ -56,6 +56,22 @@ async function ensureSchema(): Promise<void> {
      WHERE share_slug IS NULL`
   );
 
+  // People who were Common Bridge / Bridge Works members before the site
+  // existed. They are recognized on first sign-in and claim their number
+  // then. Identity and one affiliation tag only: phone numbers and personal
+  // notes stay out of this database on purpose.
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS invited_members (
+      id SERIAL PRIMARY KEY,
+      first_name TEXT NOT NULL,
+      last_name TEXT,
+      email TEXT UNIQUE,
+      affiliation TEXT,
+      source TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
   // The Philadelphia Declaration count carries on from the signatures already
   // gathered on paper. Name and date of birth only: nothing else is collected.
   await db.query(`CREATE SEQUENCE IF NOT EXISTS signature_number_seq START 1200`);

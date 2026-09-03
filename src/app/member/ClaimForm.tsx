@@ -12,8 +12,14 @@ interface Claimed {
   slug?: string;
 }
 
-export default function ClaimForm({ existing }: { existing: Claimed | null }) {
-  const [name, setName] = useState("");
+export default function ClaimForm({
+  existing,
+  initialName,
+}: {
+  existing: Claimed | null;
+  initialName?: string | null;
+}) {
+  const [name, setName] = useState(initialName || "");
   const [optin, setOptin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

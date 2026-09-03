@@ -36,21 +36,49 @@ export default async function MemberPage() {
     console.error("Member lookup error:", error);
   }
 
+  // Original Common Bridge / Bridge Works members are recognized by email
+  // and greeted by name before they claim their number.
+  let invitedName: string | null = null;
+  if (!existing) {
+    try {
+      const inv = await query(
+        `SELECT first_name, last_name FROM invited_members WHERE email = $1`,
+        [user.email.toLowerCase()]
+      );
+      if (inv.rows[0]) {
+        invitedName = [inv.rows[0].first_name, inv.rows[0].last_name]
+          .filter(Boolean)
+          .join(" ");
+      }
+    } catch (error) {
+      console.error("Invited lookup error:", error);
+    }
+  }
+
   const upcoming = upcomingEvents();
 
   return (
     <section className="mx-auto max-w-4xl px-5 pb-28 pt-36">
       <p className="eyebrow mb-5">Member</p>
       <h1 className="display text-[clamp(2.2rem,5vw,4rem)]">
-        Welcome, <span className="text-[var(--signal)]">{existing?.name || user.name || "friend"}</span>
+        Welcome{invitedName ? " back" : ""},{" "}
+        <span className="text-[var(--signal)]">
+          {existing?.name || invitedName || user.name || "friend"}
+        </span>
       </h1>
+      {invitedName && (
+        <p className="mt-4 max-w-lg text-lg leading-relaxed text-[var(--ink-dim)]">
+          You are one of the original Common Bridge members. Claim your member
+          number below.
+        </p>
+      )}
       <p className="mt-4 max-w-lg text-lg leading-relaxed text-[var(--ink-dim)]">
         You&apos;ll hear from us at{" "}
         <span className="font-semibold text-[var(--ink)]">{user.email}</span>.
       </p>
 
       <div className="mt-12">
-        <ClaimForm existing={existing} />
+        <ClaimForm existing={existing} initialName={invitedName} />
       </div>
 
       {existing && (
