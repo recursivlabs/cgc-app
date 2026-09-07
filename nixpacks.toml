@@ -6,6 +6,9 @@ cmds = ["npm install"]
 
 [phases.build]
 cmds = ["npm run build"]
+# Only directories can be BuildKit cache mounts. nixpacks would also cache
+# tsconfig.tsbuildinfo, a file, which newer Docker refuses to mount.
+cacheDirectories = [".next/cache", "node_modules/.cache"]
 
 [start]
 cmd = "npm run start"
