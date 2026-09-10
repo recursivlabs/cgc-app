@@ -1,4 +1,4 @@
-export type EventKind = "dialogue" | "service" | "cinema" | "us250" | "online";
+export type EventKind = "dialogue" | "service" | "cinema" | "coffee" | "us250" | "online";
 
 export interface CgcEvent {
   slug: string;
@@ -24,6 +24,7 @@ export const KIND_LABELS: Record<EventKind, string> = {
   dialogue: "Bridging the Divide",
   service: "Bridge to Tomorrow",
   cinema: "Pop-Up Cinema",
+  coffee: "Common Grounds Pop-Up",
   us250: "US250 Tour",
   online: "Common Bridge",
 };
@@ -60,14 +61,12 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "indiana-wesleyan",
-    rsvp: true,
     title: "Indiana Wesleyan University",
     campus: "Indiana Wesleyan University",
     state: "IN",
     kind: "us250",
     topic: "US250 Tailgate Tour",
-    blurb: "The US250 Tailgate Tour stops in Marion, Indiana.",
-    upcoming: true,
+    blurb: "The US250 Tailgate Tour stopped in Marion, Indiana.",
     date: "2026-09-04",
     dateLabel: "Sept 4\u20135",
   },

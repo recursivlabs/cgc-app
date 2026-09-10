@@ -21,6 +21,7 @@ export const INQUIRIES: Record<string, InquiryKind> = {
       "Bridging the Divide dialogue",
       "Bridge to Tomorrow service project",
       "Pop-up cinema",
+      "Common Grounds coffee pop-up",
       "US250 Tailgate Tour stop",
       "Not sure yet",
     ],

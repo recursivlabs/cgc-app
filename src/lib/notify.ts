@@ -6,11 +6,13 @@
  * the submission itself.
  */
 
+import { SITE_URL } from "@/lib/site";
+
 const ORIGIN = new URL(
   process.env.NEXT_PUBLIC_RECURSIV_URL || "https://api.recursiv.io"
 ).origin;
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://commongroundcampus.com";
+const SITE = SITE_URL;
 
 function recipients(): string[] {
   const raw = process.env.NOTIFY_TO || "felisa@commongroundcampus.com,jack@minds.com";

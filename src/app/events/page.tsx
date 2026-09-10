@@ -5,7 +5,7 @@ import { archivedEvents, upcomingEvents, KIND_LABELS, type CgcEvent } from "@/li
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "Upcoming Common Ground Campus events and the archive: dialogues, service projects, pop-up cinemas, and the US250 Tailgate Tour.",
+    "Upcoming Common Ground Campus events and the archive: dialogues, service projects, pop-up cinemas, Common Grounds coffee pop-ups, and the US250 Tailgate Tour.",
 };
 
 function fmtDate(e: CgcEvent): { top: string; bottom: string } {

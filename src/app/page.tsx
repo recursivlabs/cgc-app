@@ -10,7 +10,7 @@ const PROGRAMS = [
   },
   {
     name: "Bridge to Tomorrow",
-    text: "Service projects and immersive experiences: border cleanups, beach days, pop-up cinemas.",
+    text: "Service projects and immersive experiences: border cleanups, beach days, pop-up cinemas, and Common Grounds coffee pop-ups.",
     Icon: HeartHandshake,
   },
   {

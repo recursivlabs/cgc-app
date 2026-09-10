@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEvent } from "@/lib/events";
+import { SITE_URL } from "@/lib/site";
 
 /** GET /api/ics?event=<slug> - calendar file for an upcoming event. */
 export async function GET(req: NextRequest) {
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unknown event" }, { status: 404 });
   }
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://commongroundcampus.com";
+  const site = SITE_URL;
   const dt = e.date.replace(/-/g, "");
   const dayAfter = new Date(new Date(e.date + "T00:00:00Z").getTime() + 86400000)
     .toISOString()

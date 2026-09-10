@@ -22,7 +22,7 @@ const PROGRAMS = [
     name: "Bridge to Tomorrow",
     tag: "Shared action",
     Icon: HeartHandshake,
-    text: "Conversation turns into service: border cleanups in 100-degree heat, rival campuses cleaning a beach together, pop-up cinemas that end in real talk. You learn what you share by doing something that matters, side by side.",
+    text: "Conversation turns into service: border cleanups in 100-degree heat, rival campuses cleaning a beach together, pop-up cinemas that end in real talk, and Common Grounds: a coffee pop-up where night owls bring their ideas and stay for the conversation. You learn what you share by doing something that matters, side by side.",
     cta: { label: "See past events", href: "/events" },
   },
   {

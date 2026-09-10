@@ -17,9 +17,10 @@ const anton = localFont({
 });
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://commongroundcampus.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Common Ground Campus | Dialogue over division",
     template: "%s | Common Ground Campus",
