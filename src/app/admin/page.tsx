@@ -4,6 +4,8 @@ import { getSessionUser } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
 import { query } from "@/lib/db";
 import { INQUIRIES } from "@/lib/inquiries";
+import MemberEmailPanel from "@/components/MemberEmailPanel";
+import { summitSeptember2026 } from "@/lib/member-email";
 
 export const metadata = { title: "Inbox" };
 export const dynamic = "force-dynamic";
@@ -51,6 +53,9 @@ export default async function AdminPage(props: {
   let counts: { kind: string; n: number }[] = [];
   let members = 0;
   let signatures = 0;
+  let invited = 0;
+  let alreadySent = 0;
+  const summit = summitSeptember2026({ email: "", unsubscribeUrl: "" });
 
   try {
     const res = filter
@@ -66,6 +71,14 @@ export default async function AdminPage(props: {
 
     const s = await query(`SELECT COALESCE(MAX(signature_number), 1199)::int AS n FROM declaration_signatures`);
     signatures = s.rows[0]?.n ?? 1199;
+
+    const i = await query(
+      `SELECT COUNT(DISTINCT lower(email))::int AS n FROM invited_members
+        WHERE email IS NOT NULL AND email <> '' AND unsubscribed_at IS NULL`
+    );
+    invited = i.rows[0]?.n ?? 0;
+    const e = await query(`SELECT COUNT(*)::int AS n FROM member_email_sends WHERE template = $1`, [summit.id]);
+    alreadySent = e.rows[0]?.n ?? 0;
   } catch (error) {
     console.error("Admin read error:", error);
   }
@@ -92,6 +105,10 @@ export default async function AdminPage(props: {
             </p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8">
+        <MemberEmailPanel template={summit.id} title={summit.subject} members={invited} alreadySent={alreadySent} />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">

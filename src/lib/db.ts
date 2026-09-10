@@ -72,6 +72,20 @@ async function ensureSchema(): Promise<void> {
     )
   `);
 
+  await db.query(`ALTER TABLE invited_members ADD COLUMN IF NOT EXISTS unsub_token TEXT UNIQUE`);
+  await db.query(`ALTER TABLE invited_members ADD COLUMN IF NOT EXISTS unsubscribed_at TIMESTAMPTZ`);
+
+  // One row per member per email sent, so a send can be repeated safely.
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS member_email_sends (
+      id SERIAL PRIMARY KEY,
+      template TEXT NOT NULL,
+      email TEXT NOT NULL,
+      sent_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(template, email)
+    )
+  `);
+
   // The Philadelphia Declaration count carries on from the signatures already
   // gathered on paper. Name and date of birth only: nothing else is collected.
   await db.query(`CREATE SEQUENCE IF NOT EXISTS signature_number_seq START 1200`);

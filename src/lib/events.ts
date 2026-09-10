@@ -10,6 +10,9 @@ export interface CgcEvent {
   blurb: string;
   vimeoIds?: string[];
   upcoming?: boolean;
+  startsAt?: string; // ISO date-time with offset when the event has a set time
+  durationMinutes?: number;
+  meetingUrl?: string; // online events
   date?: string; // ISO start date when known
   dateLabel?: string; // human display, e.g. "Sept 4\u20135"
   image?: string; // /events/<slug>.jpg in /public
@@ -31,6 +34,25 @@ export const KIND_LABELS: Record<EventKind, string> = {
 
 /** Past + upcoming events. Source: commongroundcampus.com + kickoff call 2026-08-14. */
 export const EVENTS: CgcEvent[] = [
+  {
+    slug: "common-bridge-september",
+    title: "Common Bridge Summit: Disagreeing Without Disconnecting",
+    campus: "Online",
+    state: "US",
+    kind: "online",
+    topic: "Navigating disagreement in friendships and student groups",
+    blurb:
+      "The monthly forum for past and present CGC leaders. Third Thursday of every month. Invitation only. Members can invite others.",
+    upcoming: true,
+    date: "2026-09-17",
+    dateLabel: "Sept 17",
+    time: "8:00 pm ET",
+    startsAt: "2026-09-17T20:00:00-04:00",
+    durationMinutes: 60,
+    meetingUrl: "https://meetn.com/1776",
+    rsvp: true,
+    inviteOnly: true,
+  },
   {
     slug: "common-bridge-august",
     title: "Common Bridge: First Online Summit",

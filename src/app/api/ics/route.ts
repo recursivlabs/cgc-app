@@ -17,18 +17,27 @@ export async function GET(req: NextRequest) {
     .slice(0, 10)
     .replace(/-/g, "");
 
+  const utc = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const when = e.startsAt
+    ? [
+        `DTSTART:${utc(e.startsAt)}`,
+        `DTEND:${utc(new Date(new Date(e.startsAt).getTime() + (e.durationMinutes ?? 60) * 60000).toISOString())}`,
+      ]
+    : [`DTSTART;VALUE=DATE:${dt}`, `DTEND;VALUE=DATE:${dayAfter}`];
+  const esc = (s: string) => s.replace(/[,;]/g, "\\$&");
+  const link = e.meetingUrl || `${site}/events/${e.slug}`;
+
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Common Ground Campus//Events//EN",
     "BEGIN:VEVENT",
     `UID:${e.slug}@commongroundcampus.com`,
-    `DTSTART;VALUE=DATE:${dt}`,
-    `DTEND;VALUE=DATE:${dayAfter}`,
-    `SUMMARY:${e.title} | Common Ground Campus`,
-    `DESCRIPTION:${e.blurb.replace(/[,;]/g, "\\$&")}${e.time ? `\\n${e.time}` : ""}\\n${site}/events/${e.slug}`,
-    `LOCATION:${e.campus.replace(/,/g, "\\,")}`,
-    `URL:${site}/events/${e.slug}`,
+    ...when,
+    `SUMMARY:${esc(e.title)} | Common Ground Campus`,
+    `DESCRIPTION:${esc(e.blurb)}${e.time ? `\\n${e.time}` : ""}${e.meetingUrl ? `\\nMeeting link: ${e.meetingUrl}` : ""}\\n${site}/events/${e.slug}`,
+    `LOCATION:${e.meetingUrl ? e.meetingUrl : esc(e.campus)}`,
+    `URL:${link}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
