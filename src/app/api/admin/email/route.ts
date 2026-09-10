@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
-import { MEMBER_EMAILS, sendMemberEmail } from "@/lib/member-email";
+import { MEMBER_EMAILS, grantConsent, sendMemberEmail } from "@/lib/member-email";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
+
+const CONSENT_SOURCE = "Common Bridge member list provided by Common Ground Campus, 2026-09-03";
 
 function unsubscribeUrl(token: string): string {
   return `${SITE_URL}/unsubscribe?t=${encodeURIComponent(token)}`;
@@ -34,6 +36,10 @@ export async function POST(req: NextRequest) {
 
   if (body.mode === "test") {
     const mail = build({ email: user.email, unsubscribeUrl: unsubscribeUrl("test") });
+    const consent = await grantConsent([user.email], "Site admin test send");
+    if (!consent.ok) {
+      return NextResponse.json({ error: consent.error }, { status: 502 });
+    }
     const out = await sendMemberEmail(user.email, mail);
     return NextResponse.json(out.ok ? { sent: 1, to: user.email } : { error: out.error }, {
       status: out.ok ? 200 : 502,
@@ -63,9 +69,17 @@ export async function POST(req: NextRequest) {
     [templateId]
   );
 
+  const rows = res.rows as { email: string; unsub_token: string }[];
+  for (let i = 0; i < rows.length; i += 50) {
+    const consent = await grantConsent(rows.slice(i, i + 50).map((r) => r.email), CONSENT_SOURCE);
+    if (!consent.ok) {
+      return NextResponse.json({ error: consent.error }, { status: 502 });
+    }
+  }
+
   let sent = 0;
   const failed: string[] = [];
-  for (const row of res.rows as { email: string; unsub_token: string }[]) {
+  for (const row of rows) {
     const mail = build({ email: row.email, unsubscribeUrl: unsubscribeUrl(row.unsub_token) });
     const out = await sendMemberEmail(row.email, mail);
     if (out.ok) {

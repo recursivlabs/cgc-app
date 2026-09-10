@@ -158,6 +158,38 @@ export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = {
 
 export type SendOutcome = { ok: true; status: string } | { ok: false; error: string };
 
+/**
+ * Record that these people agreed to hear from Common Bridge. The platform
+ * holds marketing mail for any address without consent on file, so this runs
+ * before every send. Members gave Felisa their addresses for exactly this;
+ * the source string says so. Safe to repeat.
+ */
+export async function grantConsent(emails: string[], source: string): Promise<SendOutcome> {
+  const key = process.env.RECURSIV_API_KEY;
+  if (!key) return { ok: false, error: "RECURSIV_API_KEY is not set" };
+  if (emails.length === 0) return { ok: true, status: "nothing to do" };
+
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 15000);
+  try {
+    const res = await fetch(`${ORIGIN}/api/v1/email/consents`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ emails, source }),
+      signal: ac.signal,
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      return { ok: false, error: `consent HTTP ${res.status} ${detail.slice(0, 200)}` };
+    }
+    return { ok: true, status: "granted" };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** Send one member email to one address. Never throws. */
 export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<SendOutcome> {
   const key = process.env.RECURSIV_API_KEY;
@@ -183,8 +215,16 @@ export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<Se
       const detail = await res.text().catch(() => "");
       return { ok: false, error: `HTTP ${res.status} ${detail.slice(0, 200)}` };
     }
-    const data = (await res.json().catch(() => ({}))) as { data?: { status?: string } };
-    return { ok: true, status: data.data?.status || "queued" };
+    const data = (await res.json().catch(() => ({}))) as {
+      data?: { status?: string; messages?: { status?: string }[] };
+    };
+    // The endpoint answers 200 even when it holds the mail (no consent,
+    // suppressed address). Only queued or sent counts as delivered to the queue.
+    const status = data.data?.messages?.[0]?.status || data.data?.status || "unknown";
+    if (!["queued", "sent", "retry"].includes(status)) {
+      return { ok: false, error: `held by the platform: ${status}` };
+    }
+    return { ok: true, status };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
   } finally {
