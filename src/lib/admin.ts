@@ -9,6 +9,11 @@ const ADMINS = [
   "bill@minds.com",
 ];
 
+/** The same people, for anywhere that needs the list itself. */
+export function adminEmails(): string[] {
+  return [...ADMINS];
+}
+
 export function isAdmin(email?: string | null): boolean {
   if (!email) return false;
   return ADMINS.includes(email.trim().toLowerCase());

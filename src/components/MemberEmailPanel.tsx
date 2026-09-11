@@ -7,6 +7,8 @@ import { Loader2 } from "lucide-react";
  * Two buttons on the admin page: send yourself the email, then send it to
  * every member. The server skips anyone who already got it or unsubscribed.
  */
+const PREVIEW_TO = "felisa@commongroundcampus.com";
+
 export default function MemberEmailPanel({
   template,
   title,
@@ -18,11 +20,11 @@ export default function MemberEmailPanel({
   members: number;
   alreadySent: number;
 }) {
-  const [busy, setBusy] = useState<"test" | "all" | null>(null);
+  const [busy, setBusy] = useState<"test" | "preview" | "all" | null>(null);
   const [note, setNote] = useState("");
   const remaining = Math.max(members - alreadySent, 0);
 
-  async function send(mode: "test" | "all") {
+  async function send(mode: "test" | "preview" | "all") {
     if (mode === "all" && !window.confirm(`Send "${title}" to ${remaining} members now?`)) return;
     setBusy(mode);
     setNote("");
@@ -30,13 +32,17 @@ export default function MemberEmailPanel({
       const res = await fetch("/api/admin/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ template, mode }),
+        body: JSON.stringify({
+          template,
+          mode: mode === "preview" ? "test" : mode,
+          ...(mode === "preview" ? { to: PREVIEW_TO } : {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
         setNote(data.error || "Something went wrong.");
-      } else if (mode === "test") {
-        setNote(`Test sent to ${data.to}. Check your inbox.`);
+      } else if (mode === "test" || mode === "preview") {
+        setNote(`Sent to ${data.to}.`);
       } else {
         setNote(
           `Sent to ${data.sent} members.` +
@@ -66,6 +72,15 @@ export default function MemberEmailPanel({
         >
           {busy === "test" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           Send me a test
+        </button>
+        <button
+          type="button"
+          onClick={() => send("preview")}
+          disabled={busy !== null}
+          className="inline-flex items-center gap-2 border border-[var(--line)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--ink)] disabled:opacity-50"
+        >
+          {busy === "preview" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+          Send Felisa a preview
         </button>
         <button
           type="button"

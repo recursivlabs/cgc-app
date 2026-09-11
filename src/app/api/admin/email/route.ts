@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
-import { isAdmin } from "@/lib/admin";
+import { adminEmails, isAdmin } from "@/lib/admin";
 import { MEMBER_EMAILS, grantConsent, sendMemberEmail } from "@/lib/member-email";
 import { SITE_URL } from "@/lib/site";
 
@@ -28,20 +28,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Admins only." }, { status: 401 });
   }
 
-  const body = (await req.json().catch(() => ({}))) as { template?: string; mode?: string };
+  const body = (await req.json().catch(() => ({}))) as { template?: string; mode?: string; to?: string };
   const build = body.template ? MEMBER_EMAILS[body.template] : undefined;
   if (!build) {
     return NextResponse.json({ error: "Unknown email." }, { status: 400 });
   }
 
   if (body.mode === "test") {
-    const mail = build({ email: user.email, unsubscribeUrl: unsubscribeUrl("test") });
-    const consent = await grantConsent([user.email], "Site admin test send");
+    // A preview can go to the signed-in admin or to one of the other people
+    // already trusted with the inbox. Nowhere else: this is not a way to mail
+    // an arbitrary address from the organization.
+    const requested = body.to?.trim().toLowerCase();
+    const to = requested || user.email;
+    if (requested && !adminEmails().includes(requested)) {
+      return NextResponse.json({ error: "Previews only go to the people on the admin list." }, { status: 400 });
+    }
+    const mail = build({ email: to, unsubscribeUrl: unsubscribeUrl("test") });
+    const consent = await grantConsent([to], "Site admin test send");
     if (!consent.ok) {
       return NextResponse.json({ error: consent.error }, { status: 502 });
     }
-    const out = await sendMemberEmail(user.email, mail);
-    return NextResponse.json(out.ok ? { sent: 1, to: user.email } : { error: out.error }, {
+    const out = await sendMemberEmail(to, mail);
+    return NextResponse.json(out.ok ? { sent: 1, to } : { error: out.error }, {
       status: out.ok ? 200 : 502,
     });
   }
