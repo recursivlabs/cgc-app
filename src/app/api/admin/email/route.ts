@@ -1,26 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import { adminEmails, isAdmin } from "@/lib/admin";
-import { MEMBER_EMAILS, grantConsent, sendMemberEmail } from "@/lib/member-email";
-import { SITE_URL } from "@/lib/site";
+import { MEMBER_EMAILS } from "@/lib/member-email";
+import { sendOne, sendToAllMembers } from "@/lib/member-send";
 
 export const dynamic = "force-dynamic";
 
-const CONSENT_SOURCE = "Common Bridge member list provided by Common Ground Campus, 2026-09-03";
-
-function unsubscribeUrl(token: string): string {
-  return `${SITE_URL}/unsubscribe?t=${encodeURIComponent(token)}`;
-}
-
 /**
  * POST /api/admin/email
- * { template: "summit-2026-09", mode: "test" | "all" }
+ * { template: "summit-2026-09", mode: "test" | "all", to?: string }
  *
- * "test" sends the email to the signed-in admin only.
- * "all" sends it to every invited member who has an address and has not
- * unsubscribed, once. Anyone who already received this template is skipped,
- * so the button is safe to press twice.
+ * "test" sends one copy: to the signed-in admin, or to another person on the
+ * admin list when `to` says so.
+ * "all" sends to every member who has an address, has not unsubscribed, and
+ * has not already had this one, so the button is safe to press twice.
  */
 export async function POST(req: NextRequest) {
   const user = await getSessionUser();
@@ -29,8 +22,8 @@ export async function POST(req: NextRequest) {
   }
 
   const body = (await req.json().catch(() => ({}))) as { template?: string; mode?: string; to?: string };
-  const build = body.template ? MEMBER_EMAILS[body.template] : undefined;
-  if (!build) {
+  const templateId = body.template;
+  if (!templateId || !MEMBER_EMAILS[templateId]) {
     return NextResponse.json({ error: "Unknown email." }, { status: 400 });
   }
 
@@ -39,18 +32,13 @@ export async function POST(req: NextRequest) {
     // already trusted with the inbox. Nowhere else: this is not a way to mail
     // an arbitrary address from the organization.
     const requested = body.to?.trim().toLowerCase();
-    const to = requested || user.email;
     if (requested && !adminEmails().includes(requested)) {
       return NextResponse.json({ error: "Previews only go to the people on the admin list." }, { status: 400 });
     }
-    const mail = build({ email: to, unsubscribeUrl: unsubscribeUrl("test") });
-    const consent = await grantConsent([to], "Site admin test send");
-    if (!consent.ok) {
-      return NextResponse.json({ error: consent.error }, { status: 502 });
-    }
-    const out = await sendMemberEmail(to, mail);
-    return NextResponse.json(out.ok ? { sent: 1, to } : { error: out.error }, {
-      status: out.ok ? 200 : 502,
+    const to = requested || user.email;
+    const out = await sendOne(templateId, to);
+    return NextResponse.json(out.error ? { error: out.error } : { sent: out.sent, to }, {
+      status: out.error ? 502 : 200,
     });
   }
 
@@ -58,49 +46,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "mode must be test or all." }, { status: 400 });
   }
 
-  const templateId = build({ email: "", unsubscribeUrl: "" }).id;
-
-  // Every member gets a token once; it stays the same across emails.
-  await query(
-    `UPDATE invited_members
-        SET unsub_token = md5(random()::text || clock_timestamp()::text || email)
-      WHERE unsub_token IS NULL AND email IS NOT NULL`
-  );
-
-  const res = await query(
-    `SELECT DISTINCT ON (lower(email)) lower(email) AS email, unsub_token
-       FROM invited_members
-      WHERE email IS NOT NULL AND email <> ''
-        AND unsubscribed_at IS NULL
-        AND lower(email) NOT IN (SELECT email FROM member_email_sends WHERE template = $1)
-      ORDER BY lower(email), id`,
-    [templateId]
-  );
-
-  const rows = res.rows as { email: string; unsub_token: string }[];
-  for (let i = 0; i < rows.length; i += 50) {
-    const consent = await grantConsent(rows.slice(i, i + 50).map((r) => r.email), CONSENT_SOURCE);
-    if (!consent.ok) {
-      return NextResponse.json({ error: consent.error }, { status: 502 });
-    }
-  }
-
-  let sent = 0;
-  const failed: string[] = [];
-  for (const row of rows) {
-    const mail = build({ email: row.email, unsubscribeUrl: unsubscribeUrl(row.unsub_token) });
-    const out = await sendMemberEmail(row.email, mail);
-    if (out.ok) {
-      sent += 1;
-      await query(
-        `INSERT INTO member_email_sends (template, email) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-        [templateId, row.email]
-      );
-    } else {
-      failed.push(row.email);
-      console.error("member email failed", row.email, out.error);
-    }
-  }
-
-  return NextResponse.json({ sent, failed });
+  const out = await sendToAllMembers(templateId);
+  return NextResponse.json(out.error ? { error: out.error } : { sent: out.sent, failed: out.failed }, {
+    status: out.error ? 502 : 200,
+  });
 }

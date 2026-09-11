@@ -197,10 +197,25 @@ export function summitSeptember2026Reminder(r: Recipient): MemberEmail {
   };
 }
 
-/** Every member email, newest last. The admin page renders one panel each. */
-export const MEMBER_EMAIL_LIST: { id: string; label: string; build: (r: Recipient) => MemberEmail }[] = [
+/**
+ * Every member email, newest last. The admin page renders one panel each.
+ *
+ * `sendAt` is a date in New York. An email that has one goes out on its own
+ * that morning; an email without one waits for someone to press the button.
+ */
+export const MEMBER_EMAIL_LIST: {
+  id: string;
+  label: string;
+  build: (r: Recipient) => MemberEmail;
+  sendAt?: string;
+}[] = [
   { id: "summit-2026-09", label: "Summit invitation", build: summitSeptember2026 },
-  { id: "summit-2026-09-reminder", label: "Summit reminder, send the morning of Sept 17", build: summitSeptember2026Reminder },
+  {
+    id: "summit-2026-09-reminder",
+    label: "Summit reminder, sends itself the morning of Sept 17",
+    build: summitSeptember2026Reminder,
+    sendAt: "2026-09-17",
+  },
 ];
 
 export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = Object.fromEntries(

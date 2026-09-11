@@ -1,0 +1,22 @@
+name: Scheduled member email
+
+# Sends any member email whose own send date is today. The site decides what
+# is due; this only wakes it up. Nothing is sent on a day with nothing due.
+on:
+  schedule:
+    - cron: '0 13 * * *' # 09:00 America/New_York in summer, 08:00 in winter
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the site to send what is due today
+        run: |
+          code=$(curl -sS -o body.json -w '%{http_code}' -X POST \
+            -H "x-cron-key: ${{ secrets.CRON_SECRET }}" \
+            --max-time 300 \
+            https://commongroundcampus.com/api/cron/member-email)
+          cat body.json
+          echo
+          test "$code" = "200"
