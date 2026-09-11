@@ -12,11 +12,13 @@ const PREVIEW_TO = "felisa@commongroundcampus.com";
 export default function MemberEmailPanel({
   template,
   title,
+  note: label,
   members,
   alreadySent,
 }: {
   template: string;
   title: string;
+  note: string;
   members: number;
   alreadySent: number;
 }) {
@@ -58,7 +60,7 @@ export default function MemberEmailPanel({
 
   return (
     <div className="border border-[var(--line)] bg-[var(--panel)] p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ink-dim)]">Email members</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ink-dim)]">{label}</p>
       <p className="display mt-2 text-xl">{title}</p>
       <p className="mt-2 text-[15px] text-[var(--ink-dim)]">
         {members} members can receive email. {alreadySent} already received this one.

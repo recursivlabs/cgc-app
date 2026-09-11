@@ -5,7 +5,7 @@ import { isAdmin } from "@/lib/admin";
 import { query } from "@/lib/db";
 import { INQUIRIES } from "@/lib/inquiries";
 import MemberEmailPanel from "@/components/MemberEmailPanel";
-import { summitSeptember2026 } from "@/lib/member-email";
+import { MEMBER_EMAIL_LIST } from "@/lib/member-email";
 
 export const metadata = { title: "Inbox" };
 export const dynamic = "force-dynamic";
@@ -54,8 +54,11 @@ export default async function AdminPage(props: {
   let members = 0;
   let signatures = 0;
   let invited = 0;
-  let alreadySent = 0;
-  const summit = summitSeptember2026({ email: "", unsubscribeUrl: "" });
+  const sentByTemplate = new Map<string, number>();
+  const emails = MEMBER_EMAIL_LIST.map((t) => ({
+    ...t,
+    mail: t.build({ email: "", unsubscribeUrl: "" }),
+  }));
 
   try {
     const res = filter
@@ -77,8 +80,12 @@ export default async function AdminPage(props: {
         WHERE email IS NOT NULL AND email <> '' AND unsubscribed_at IS NULL`
     );
     invited = i.rows[0]?.n ?? 0;
-    const e = await query(`SELECT COUNT(*)::int AS n FROM member_email_sends WHERE template = $1`, [summit.id]);
-    alreadySent = e.rows[0]?.n ?? 0;
+    const e = await query(
+      `SELECT template, COUNT(*)::int AS n FROM member_email_sends GROUP BY template`
+    );
+    for (const row of e.rows as { template: string; n: number }[]) {
+      sentByTemplate.set(row.template, row.n);
+    }
   } catch (error) {
     console.error("Admin read error:", error);
   }
@@ -107,8 +114,17 @@ export default async function AdminPage(props: {
         ))}
       </div>
 
-      <div className="mt-8">
-        <MemberEmailPanel template={summit.id} title={summit.subject} members={invited} alreadySent={alreadySent} />
+      <div className="mt-8 space-y-px">
+        {emails.map((e) => (
+          <MemberEmailPanel
+            key={e.id}
+            template={e.id}
+            title={e.mail.subject}
+            note={e.label}
+            members={invited}
+            alreadySent={sentByTemplate.get(e.id) ?? 0}
+          />
+        ))}
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">

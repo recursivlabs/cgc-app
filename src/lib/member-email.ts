@@ -152,9 +152,60 @@ export function summitSeptember2026(r: Recipient): MemberEmail {
   };
 }
 
-export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = {
-  "summit-2026-09": summitSeptember2026,
-};
+/**
+ * Day-of reminder. Short on purpose: people read it on a phone an hour before
+ * and need one thing, the link. Send it the morning of the summit.
+ */
+export function summitSeptember2026Reminder(r: Recipient): MemberEmail {
+  const meet = "https://meetn.com/1776";
+  const lead = `
+          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">Tonight &middot; 8:00 to 9:00 pm ET &middot; online</p>
+          <p style="margin:0 0 24px;"><a href="${meet}" style="display:inline-block;background:#3aa6f5;color:#141417;text-decoration:none;padding:12px 22px;font:600 14px/1 ${FONT};">Join the Summit</a></p>`;
+  const body = `
+          <p style="margin:0 0 16px;">Hi everyone,</p>
+          <p style="margin:0 0 16px;">A quick reminder that the Common Bridge Summit is tonight at 8:00 pm ET. Tonight's theme is <strong>Disagreeing Without Disconnecting</strong>: navigating disagreement in friendships and student groups.</p>
+          <p style="margin:0 0 16px;">Join here: <a href="${meet}" style="${LINK}">meetn.com/1776</a></p>
+          <p style="margin:0 0 16px;">No preparation needed. Bring what is on your mind.</p>
+          <p style="margin:0 0 4px;">See you tonight,</p>
+          <p style="margin:0 0 28px;">Felisa<br><a href="mailto:felisa@commongroundcampus.com" style="${LINK}">felisa@commongroundcampus.com</a><br><a href="${SITE_URL}" style="${LINK}">commongroundcampus.com</a></p>`;
+
+  const text = [
+    "Common Bridge Summit: tonight, 8:00 to 9:00 pm ET, online.",
+    `Join: ${meet}`,
+    "",
+    "Hi everyone,",
+    "",
+    "A quick reminder that the Common Bridge Summit is tonight at 8:00 pm ET. Tonight's theme is Disagreeing Without Disconnecting: navigating disagreement in friendships and student groups.",
+    "",
+    `Join here: ${meet}`,
+    "",
+    "No preparation needed. Bring what is on your mind.",
+    "",
+    "See you tonight,",
+    "Felisa",
+    "felisa@commongroundcampus.com",
+    "commongroundcampus.com",
+    "",
+    `You are receiving this because you are a Common Bridge member. Unsubscribe with one click: ${r.unsubscribeUrl}`,
+  ].join("\n");
+
+  return {
+    id: "summit-2026-09-reminder",
+    subject: "Tonight: Common Bridge Summit, 8 pm ET",
+    html: shell("Common Bridge", "Tonight at 8:00 pm ET", lead, body, r.unsubscribeUrl),
+    text,
+  };
+}
+
+/** Every member email, newest last. The admin page renders one panel each. */
+export const MEMBER_EMAIL_LIST: { id: string; label: string; build: (r: Recipient) => MemberEmail }[] = [
+  { id: "summit-2026-09", label: "Summit invitation", build: summitSeptember2026 },
+  { id: "summit-2026-09-reminder", label: "Summit reminder, send the morning of Sept 17", build: summitSeptember2026Reminder },
+];
+
+export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = Object.fromEntries(
+  MEMBER_EMAIL_LIST.map((t) => [t.id, t.build]),
+);
 
 export type SendOutcome = { ok: true; status: string } | { ok: false; error: string };
 
