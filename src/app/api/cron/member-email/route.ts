@@ -5,15 +5,13 @@ import { sendToAllMembers } from "@/lib/member-send";
 
 export const dynamic = "force-dynamic";
 
-/** Today's date in New York, as YYYY-MM-DD. Members and events are on ET. */
-function todayInNewYork(): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-}
+/**
+ * How long after its moment an email may still go out. The scheduler wakes on
+ * the hour, so a send is always a little late; past this it is so late that
+ * sending would be worse than not, and a template left in the list with an old
+ * date can never surprise a member who joined months later.
+ */
+const GRACE_MS = 6 * 60 * 60 * 1000;
 
 function keyMatches(given: string | null, expected: string): boolean {
   if (!given) return false;
@@ -25,10 +23,10 @@ function keyMatches(given: string | null, expected: string): boolean {
 /**
  * POST /api/cron/member-email
  *
- * Runs once a day. Sends any member email whose own `sendAt` date is today in
- * New York, and nothing else: an email with no date set is never sent from
- * here, only by a person pressing the button. The sends table means a repeat
- * run mails nobody twice.
+ * Runs on a schedule. Sends any member email whose own moment has arrived and
+ * has not long passed, and nothing else: an email with no date set is never
+ * sent from here, only by a person pressing the button. The sends table means
+ * a repeat run mails nobody twice.
  */
 export async function POST(req: NextRequest) {
   const expected = process.env.CRON_SECRET;
@@ -39,10 +37,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No." }, { status: 401 });
   }
 
-  const today = todayInNewYork();
-  const due = MEMBER_EMAIL_LIST.filter((t) => t.sendAt === today);
+  const now = Date.now();
+  const due = MEMBER_EMAIL_LIST.filter((t) => {
+    if (!t.sendAt) return false;
+    const at = Date.parse(t.sendAt);
+    return Number.isFinite(at) && now >= at && now < at + GRACE_MS;
+  });
   if (due.length === 0) {
-    return NextResponse.json({ date: today, due: 0, sent: 0 });
+    return NextResponse.json({ now: new Date(now).toISOString(), due: 0, sent: 0 });
   }
 
   const results: { template: string; sent: number; failed: number; error?: string }[] = [];
@@ -53,5 +55,5 @@ export async function POST(req: NextRequest) {
   }
 
   const failedAny = results.some((r) => r.error || r.failed > 0);
-  return NextResponse.json({ date: today, due: due.length, results }, { status: failedAny ? 502 : 200 });
+  return NextResponse.json({ now: new Date(now).toISOString(), due: due.length, results }, { status: failedAny ? 502 : 200 });
 }

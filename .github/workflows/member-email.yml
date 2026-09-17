@@ -4,7 +4,7 @@ name: Scheduled member email
 # is due; this only wakes it up. Nothing is sent on a day with nothing due.
 on:
   schedule:
-    - cron: '0 13 * * *' # 09:00 America/New_York in summer, 08:00 in winter
+    - cron: '0 * * * *' # every hour; the site decides what is due
   workflow_dispatch:
 
 jobs:
