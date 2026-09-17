@@ -35,6 +35,25 @@ export const KIND_LABELS: Record<EventKind, string> = {
 /** Past + upcoming events. Source: commongroundcampus.com + kickoff call 2026-08-14. */
 export const EVENTS: CgcEvent[] = [
   {
+    slug: "common-grounds-arlington-heights",
+    title: "Common Grounds: Coffee + Connection",
+    campus: "Around Cafe, Arlington Heights IL",
+    state: "IL",
+    kind: "coffee",
+    topic: "Coffee and conversation",
+    blurb:
+      "Free coffee, good company, and an open table. Come share what you are thinking about, meet people outside your usual circle, and stay as long as you like.",
+    upcoming: true,
+    date: "2026-09-23",
+    dateLabel: "Sept 23",
+    time: "6:00 to 8:00 pm CT",
+    startsAt: "2026-09-23T18:00:00-05:00",
+    durationMinutes: 120,
+    venue: "Around Cafe, 28 E Northwest Hwy, Arlington Heights IL",
+    flyer: "/events/flyers/common-grounds-arlington-heights.jpg",
+    rsvp: true,
+  },
+  {
     slug: "common-bridge-september",
     title: "Common Bridge Summit: Disagreeing Without Disconnecting",
     campus: "Online",
