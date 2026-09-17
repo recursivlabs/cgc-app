@@ -198,21 +198,21 @@ export function summitSeptember2026Reminder(r: Recipient): MemberEmail {
 }
 
 /**
- * The last nudge, an hour before the doors open. One line and a link: this is
- * read on a phone by someone deciding whether to join in a minute.
+ * The last nudge, ten minutes before the doors open. One line and a link:
+ * this is read on a phone by someone who is about to join or about to forget.
  */
 export function summitSeptember2026Final(r: Recipient): MemberEmail {
   const meet = "https://meetn.com/1776";
   const lead = `
-          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">8:00 pm ET, in about an hour</p>
+          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">Starting in ten minutes</p>
           <p style="margin:0 0 24px;"><a href="${meet}" style="display:inline-block;background:#3aa6f5;color:#141417;text-decoration:none;padding:14px 26px;font:600 15px/1 ${FONT};">Join the Summit</a></p>`;
   const body = `
-          <p style="margin:0 0 16px;">The Common Bridge Summit starts at 8:00 pm ET. Tonight: <strong>Disagreeing Without Disconnecting</strong>.</p>
+          <p style="margin:0 0 16px;">The Common Bridge Summit starts in about ten minutes. Tonight: <strong>Disagreeing Without Disconnecting</strong>.</p>
           <p style="margin:0 0 16px;">Here is the link again, in case you need it: <a href="${meet}" style="${LINK}">meetn.com/1776</a></p>
           <p style="margin:0 0 28px;">See you shortly,<br>Felisa</p>`;
 
   const text = [
-    "Common Bridge Summit starts at 8:00 pm ET, in about an hour.",
+    "Common Bridge Summit starts in about ten minutes, at 8:00 pm ET.",
     `Join: ${meet}`,
     "",
     "Tonight: Disagreeing Without Disconnecting.",
@@ -225,7 +225,7 @@ export function summitSeptember2026Final(r: Recipient): MemberEmail {
 
   return {
     id: "summit-2026-09-final",
-    subject: "Starting at 8 pm ET: Common Bridge Summit",
+    subject: "Starting in 10 minutes: Common Bridge Summit",
     html: shell("Common Bridge", "Tonight at 8:00 pm ET", lead, body, r.unsubscribeUrl),
     text,
   };
@@ -254,9 +254,9 @@ export const MEMBER_EMAIL_LIST: {
   },
   {
     id: "summit-2026-09-final",
-    label: "Last nudge, sends itself at 7:00 pm ET on Sept 17",
+    label: "Last nudge, sends itself at 7:50 pm ET on Sept 17",
     build: summitSeptember2026Final,
-    sendAt: "2026-09-17T19:00:00-04:00",
+    sendAt: "2026-09-17T19:50:00-04:00",
   },
 ];
 
