@@ -19,7 +19,7 @@ export const HONEYPOT_FIELD = "website";
  * True for one word that looks typed by a random generator, such as
  * "vLxoHCWkPhZswWxebaLi": long, with capitals scattered and stacked through
  * it. Real names like "McDonald", "DeShawn", "O'Brien", "UCLA" or
- * "StudentsForDialogue" pass. We judge case,
+ * "StudentsForDialogue", "NYUStern" pass. We judge case,
  * not spelling, so Polish, Welsh or German names are never at risk.
  */
 export function looksRandomWord(word: string): boolean {
@@ -28,7 +28,10 @@ export function looksRandomWord(word: string): boolean {
   const lower = (word.match(/[a-z]/g) || []).length;
   // CamelCase names (StudentsForDialogue) never stack capitals mid-word;
   // generated strings almost always do (HCW, LLM).
-  return innerCaps >= 3 && lower >= 3 && /[A-Z]{2}/.test(word.slice(1));
+  if (innerCaps < 3 || lower < 3 || !/[A-Z]{2}/.test(word.slice(1))) return false;
+  // Acronym-led names (NYUStern, UCSanDiego, MITMediaLab) switch from lower
+  // to upper case once at most; generated strings do it three or more times.
+  return (word.match(/[a-z][A-Z]/g) || []).length >= 3;
 }
 
 /** True when any word in a field looks random. */
@@ -48,7 +51,7 @@ export function isGibberish(fields: (string | null | undefined)[]): boolean {
   return fields.filter(looksRandom).length >= 2;
 }
 
-/** Why a submission was dropped, or null when it looks human. */
+/** Why a submission looks like a bot, or null when it looks human. */
 export function botReason(input: {
   honeypot: string;
   /** How long the form was open, measured in the browser (no clock skew). */

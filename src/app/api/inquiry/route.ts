@@ -33,16 +33,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please choose an option." }, { status: 400 });
     }
 
-    const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "")
-      .split(",")[0]
-      .trim();
+    // Our proxy appends the real client address last; earlier entries are client-set.
+    const forwarded = (req.headers.get("x-forwarded-for") || "").split(",");
+    const ip = (req.headers.get("cf-connecting-ip") || forwarded[forwarded.length - 1] || "").trim();
     const elapsed = Number(body.elapsedMs);
-    const reason =
-      botReason({
-        honeypot: String(body[HONEYPOT_FIELD] || ""),
-        elapsedMs: Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
-        fields: [name, organization, location, message],
-      }) || (rateLimited(ip) ? "rate-limit" : null);
+    const reason = botReason({
+      honeypot: String(body[HONEYPOT_FIELD] || ""),
+      elapsedMs: Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
+      fields: [name, organization, location, message],
+    });
+
+    // Fast or busy might be a person: tell them, so nothing is lost silently.
+    if (reason === "too-fast" || (!reason && rateLimited(ip))) {
+      console.warn("inquiry: asked to retry", { reason: reason || "rate-limit", kind: spec.kind, ip });
+      return NextResponse.json(
+        { error: "Please wait a moment and send again." },
+        { status: 429 }
+      );
+    }
 
     if (reason) {
       // Looks like a bot: answer as if it worked, store nothing, email nobody.
