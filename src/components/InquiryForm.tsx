@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 import { Loader2, Check } from "lucide-react";
 import type { InquiryKind } from "@/lib/inquiries";
+import { HONEYPOT_FIELD } from "@/lib/spam";
+
+/** Cloudflare Turnstile shows only when this key is set at build time. */
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 
 /**
  * Every "get in touch" form on the site. The shape changes per kind, the
@@ -29,6 +34,12 @@ export default function InquiryForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  // When the form appeared, so the server can tell a person from a script.
+  const openedAt = useRef(0);
+  useEffect(() => {
+    openedAt.current = Date.now();
+  }, []);
 
   function set(field: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -38,11 +49,21 @@ export default function InquiryForm({
     e.preventDefault();
     setLoading(true);
     setError("");
+    const turnstileToken = String(
+      new FormData(e.currentTarget as HTMLFormElement).get("cf-turnstile-response") || ""
+    );
     try {
       const res = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, kind: spec.kind, context }),
+        body: JSON.stringify({
+          ...form,
+          kind: spec.kind,
+          context,
+          [HONEYPOT_FIELD]: honeypot,
+          elapsedMs: openedAt.current ? Date.now() - openedAt.current : null,
+          turnstileToken,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "We couldn't send that.");
@@ -73,6 +94,13 @@ export default function InquiryForm({
 
   return (
     <form onSubmit={handleSubmit} className={`card space-y-5 ${compact ? "p-6" : "p-8"}`}>
+      {/* Hidden from people and screen readers. Bots fill it in and get dropped. */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+        <label htmlFor={id(HONEYPOT_FIELD)}>Leave this empty</label>
+        <input id={id(HONEYPOT_FIELD)} name={HONEYPOT_FIELD} type="text" tabIndex={-1}
+          autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+      </div>
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor={id("name")} className="field-label">Your name</label>
@@ -122,6 +150,13 @@ export default function InquiryForm({
           onChange={(e) => set("message", e.target.value)} className="input resize-y"
           placeholder={spec.messagePlaceholder} />
       </div>
+
+      {TURNSTILE_SITE_KEY && (
+        <>
+          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
+          <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-theme="auto" />
+        </>
+      )}
 
       {error && <p className="form-error">{error}</p>}
 

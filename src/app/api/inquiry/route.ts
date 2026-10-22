@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getInquiry } from "@/lib/inquiries";
 import { notify } from "@/lib/notify";
+import { HONEYPOT_FIELD, botReason, rateLimited, turnstileOk } from "@/lib/spam";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,36 @@ export async function POST(req: NextRequest) {
     }
     if (spec.detailOptions && !spec.detailOptions.includes(detail)) {
       return NextResponse.json({ error: "Please choose an option." }, { status: 400 });
+    }
+
+    const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "")
+      .split(",")[0]
+      .trim();
+    const elapsed = Number(body.elapsedMs);
+    const reason =
+      botReason({
+        honeypot: String(body[HONEYPOT_FIELD] || ""),
+        elapsedMs: Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
+        fields: [name, organization, location, message],
+      }) || (rateLimited(ip) ? "rate-limit" : null);
+
+    if (reason) {
+      // Looks like a bot: answer as if it worked, store nothing, email nobody.
+      console.warn("inquiry: dropped", {
+        reason,
+        kind: spec.kind,
+        ip,
+        ua: req.headers.get("user-agent") || "",
+        email,
+      });
+      return NextResponse.json({ success: true });
+    }
+
+    if (!(await turnstileOk(String(body.turnstileToken || ""), ip))) {
+      return NextResponse.json(
+        { error: "Please confirm you're not a robot, then send again." },
+        { status: 400 }
+      );
     }
 
     await query(
