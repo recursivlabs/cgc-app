@@ -164,6 +164,7 @@ async function ensureSchema(): Promise<void> {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await db.query(`ALTER TABLE video_uploads ADD COLUMN IF NOT EXISTS notify_token TEXT`);
 
   ready = true;
 }

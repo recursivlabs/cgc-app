@@ -38,7 +38,7 @@ export default async function VideosPage() {
   if (!canSeeVideos(user.email)) redirect("/");
 
   let rows: Row[] = [];
-  let tally: { name: string; videos: number; photos: number }[] = [];
+  let tally: { email: string; name: string; videos: number; photos: number }[] = [];
   try {
     const res = await query(
       `SELECT id, name, email, filename, content_type, size_bytes, note, created_at
@@ -48,7 +48,8 @@ export default async function VideosPage() {
 
     // This month so far, Eastern time: the retainer asks for 5 to 10 videos.
     const t = await query(
-      `SELECT MAX(name) AS name,
+      `SELECT email,
+              (ARRAY_AGG(name ORDER BY created_at DESC))[1] AS name,
               COUNT(*) FILTER (WHERE content_type LIKE 'video/%')::int AS videos,
               COUNT(*) FILTER (WHERE content_type LIKE 'image/%')::int AS photos
          FROM video_uploads
@@ -79,9 +80,12 @@ export default async function VideosPage() {
           <p className="eyebrow mb-4">
             This month · goal {MONTHLY_GOAL} videos each
           </p>
+          <p className="-mt-2 mb-4 text-xs text-[var(--ink-faint)]">
+            Counted by the email each person typed in, so check the videos themselves before paying on it.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {tally.map((t) => (
-              <div key={t.name} className="border border-[var(--line)] bg-[var(--panel)] p-5">
+              <div key={t.email} title={t.email} className="border border-[var(--line)] bg-[var(--panel)] p-5">
                 <p className="truncate text-[15px] font-semibold">{t.name}</p>
                 <p className="mt-2">
                   <span className={`tally ${t.videos >= MONTHLY_GOAL ? "text-[var(--signal)]" : ""}`}>

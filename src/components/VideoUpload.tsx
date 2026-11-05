@@ -3,48 +3,114 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Check, Upload, X } from "lucide-react";
 import { HONEYPOT_FIELD } from "@/lib/spam";
+import { CHUNK_BYTES, MAX_VIDEO_BYTES, videoType } from "@/lib/video-rules";
 
-type Status = "waiting" | "sending" | "done" | "failed";
+/** failed = worth another try; rejected = this file will never be taken. */
+type Status = "waiting" | "sending" | "done" | "failed" | "rejected";
 interface Item {
   file: File;
   status: Status;
   progress: number;
   error?: string;
-  id?: number;
 }
 
 const SAVED = "cgc-ambassador";
 
-function sendOne(
-  file: File,
-  who: { name: string; email: string; note: string },
-  extra: Record<string, string>,
-  onProgress: (p: number) => void
-): Promise<number> {
+class UploadError extends Error {
+  constructor(message: string, public final = false) {
+    super(message);
+  }
+}
+
+/** Why the browser can tell, before sending anything, that a file won't be taken. */
+function precheck(file: File): string | null {
+  if (!videoType(file.name, file.type)) return `${file.name} isn't a video or photo.`;
+  if (file.size === 0) return `${file.name} is empty.`;
+  if (file.size > MAX_VIDEO_BYTES) return `${file.name} is over 2 GB. Send a shorter clip.`;
+  return null;
+}
+
+/** One piece, with upload progress. Resolves with the server's answer. */
+function putPiece(
+  url: string,
+  blob: Blob,
+  onProgress: (loaded: number) => void
+): Promise<{ status: number; data: Record<string, unknown> }> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("PUT", "/api/videos");
-    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
-    xhr.setRequestHeader("x-cgc-name", encodeURIComponent(who.name));
-    xhr.setRequestHeader("x-cgc-email", encodeURIComponent(who.email));
-    xhr.setRequestHeader("x-cgc-note", encodeURIComponent(who.note));
-    xhr.setRequestHeader("x-cgc-filename", encodeURIComponent(file.name));
-    xhr.setRequestHeader("x-cgc-size", String(file.size));
-    for (const [k, v] of Object.entries(extra)) xhr.setRequestHeader(k, encodeURIComponent(v));
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgress(e.loaded / e.total);
-    };
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+    xhr.upload.onprogress = (e) => onProgress(e.loaded);
     xhr.onload = () => {
-      let data: { id?: number; error?: string } = {};
+      let data: Record<string, unknown> = {};
       try {
         data = JSON.parse(xhr.responseText);
       } catch {}
-      if (xhr.status >= 200 && xhr.status < 300 && data.id) resolve(data.id);
-      else reject(new Error(data.error || "That upload didn't go through."));
+      resolve({ status: xhr.status, data });
     };
-    xhr.onerror = () => reject(new Error("Connection dropped. Try again on Wi-Fi."));
-    xhr.send(file);
+    xhr.onerror = () => reject(new UploadError("Connection dropped."));
+    xhr.ontimeout = () => reject(new UploadError("Connection timed out."));
+    xhr.timeout = 4 * 60 * 1000;
+    xhr.send(blob);
   });
+}
+
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Send one file in pieces. A dropped piece is retried from wherever the
+ * server says it got to, so a flaky connection slows things down instead of
+ * starting over.
+ */
+async function sendOne(
+  file: File,
+  who: { name: string; email: string; note: string },
+  extra: Record<string, unknown>,
+  onProgress: (p: number) => void
+): Promise<{ id: number; token: string }> {
+  const start = await fetch("/api/videos/upload", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...who, ...extra, filename: file.name, size: file.size, type: file.type }),
+  });
+  const started = await start.json().catch(() => ({}));
+  if (!start.ok || !started.id) {
+    const final = start.status >= 400 && start.status < 500 && start.status !== 429;
+    throw new UploadError(started.error || "That upload didn't start.", final);
+  }
+
+  let offset = 0;
+  let misses = 0;
+  while (true) {
+    const end = Math.min(offset + CHUNK_BYTES, file.size);
+    let res: { status: number; data: Record<string, unknown> };
+    try {
+      res = await putPiece(`/api/videos/upload/${started.id}?offset=${offset}`, file.slice(offset, end), (loaded) =>
+        onProgress(Math.min(1, (offset + loaded) / file.size))
+      );
+    } catch (err) {
+      if (++misses > 6) throw err;
+      await wait(1000 * 2 ** Math.min(misses, 4));
+      res = { status: 409, data: {} };
+      // Ask where the server got to by re-sending from our offset; it answers 409 with the truth.
+    }
+    const d = res.data;
+    if (res.status === 200 && d.done) return { id: Number(d.id), token: String(d.token) };
+    if (res.status === 200 && typeof d.received === "number") {
+      offset = d.received;
+      misses = 0;
+      continue;
+    }
+    if (res.status === 409) {
+      if (typeof d.received === "number") offset = d.received;
+      if (++misses > 12) throw new UploadError("That upload kept getting interrupted.");
+      if (!d.received && !Object.keys(d).length) continue;
+      await wait(500);
+      continue;
+    }
+    const final = res.status === 400 || res.status === 413 || res.status === 415;
+    throw new UploadError(String(d.error || "That upload didn't go through."), final);
+  }
 }
 
 /** Pick videos or photos (or drag them in), send them, done. */
@@ -68,14 +134,39 @@ export default function VideoUpload() {
     } catch {}
   }, []);
 
+  // A file dropped beside the box would open in the tab and lose the form.
+  useEffect(() => {
+    const stop = (e: DragEvent) => e.preventDefault();
+    window.addEventListener("dragover", stop);
+    window.addEventListener("drop", stop);
+    return () => {
+      window.removeEventListener("dragover", stop);
+      window.removeEventListener("drop", stop);
+    };
+  }, []);
+
+  // Leaving mid-upload loses it, so ask first.
+  useEffect(() => {
+    if (!busy) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [busy]);
+
   function addFiles(list: FileList | null) {
     // Copy now: the picker is cleared right after, which empties the live list.
     const files = list ? Array.from(list) : [];
     if (!files.length) return;
     setFinished(0);
+    setError("");
     setItems((cur) => [
       ...cur.filter((i) => i.status !== "done"),
-      ...files.map((file) => ({ file, status: "waiting" as Status, progress: 0 })),
+      ...files.map((file) => {
+        const why = precheck(file);
+        return why
+          ? { file, status: "rejected" as Status, progress: 0, error: why }
+          : { file, status: "waiting" as Status, progress: 0 };
+      }),
     ]);
   }
 
@@ -86,7 +177,8 @@ export default function VideoUpload() {
   async function send(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!items.some((i) => i.status !== "done")) {
+    const todo = items.filter((i) => i.status === "waiting" || i.status === "failed");
+    if (!todo.length) {
       setError("Choose at least one video or photo.");
       return;
     }
@@ -95,30 +187,34 @@ export default function VideoUpload() {
       localStorage.setItem(SAVED, JSON.stringify({ name: who.name, email: who.email }));
     } catch {}
 
-    const ids: number[] = [];
+    const sent: { id: number; token: string }[] = [];
     const extra = {
-      [`x-cgc-${HONEYPOT_FIELD}`]: honeypot,
-      "x-cgc-elapsed": String(openedAt.current ? Date.now() - openedAt.current : ""),
+      [HONEYPOT_FIELD]: honeypot,
+      elapsedMs: openedAt.current ? Date.now() - openedAt.current : null,
     };
     for (let i = 0; i < items.length; i++) {
-      if (items[i].status === "done") continue;
+      if (items[i].status !== "waiting" && items[i].status !== "failed") continue;
       update(i, { status: "sending", progress: 0, error: undefined });
       try {
-        const id = await sendOne(items[i].file, who, extra, (p) => update(i, { progress: p }));
-        ids.push(id);
-        update(i, { status: "done", progress: 1, id });
+        const r = await sendOne(items[i].file, who, extra, (p) => update(i, { progress: p }));
+        sent.push(r);
+        update(i, { status: "done", progress: 1 });
       } catch (err) {
-        update(i, { status: "failed", error: err instanceof Error ? err.message : "Failed" });
+        const final = err instanceof UploadError && err.final;
+        update(i, {
+          status: final ? "rejected" : "failed",
+          error: err instanceof Error ? err.message : "Failed",
+        });
       }
     }
 
-    if (ids.length) {
+    if (sent.length) {
       await fetch("/api/videos/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: who.email, ids }),
+        body: JSON.stringify({ items: sent }),
       }).catch(() => {});
-      setFinished(ids.length);
+      setFinished(sent.length);
       setWho((w) => ({ ...w, note: "" }));
     }
     setBusy(false);
@@ -174,7 +270,7 @@ export default function VideoUpload() {
                 <span className="flex shrink-0 items-center gap-2 text-xs text-[var(--ink-dim)]">
                   {it.status === "sending" && `${Math.round(it.progress * 100)}%`}
                   {it.status === "done" && <Check className="h-4 w-4 text-[var(--signal)]" />}
-                  {it.status === "waiting" && !busy && (
+                  {(it.status === "waiting" || it.status === "failed" || it.status === "rejected") && !busy && (
                     <button type="button" aria-label={`Remove ${it.file.name}`}
                       onClick={() => setItems((cur) => cur.filter((_, j) => j !== i))}>
                       <X className="h-4 w-4" />

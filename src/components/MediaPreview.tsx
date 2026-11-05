@@ -27,7 +27,7 @@ export default function MediaPreview({ id, contentType }: { id: number; contentT
     <img src={src} alt="" loading="lazy" onError={() => setBroken(true)}
       className="max-h-[520px] w-full bg-black object-contain" />
   ) : (
-    <video src={src} controls playsInline preload="metadata" onError={() => setBroken(true)}
+    <video src={src} controls playsInline preload="none" onError={() => setBroken(true)}
       className="max-h-[520px] w-full bg-black" />
   );
 }

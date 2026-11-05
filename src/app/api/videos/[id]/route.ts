@@ -39,6 +39,12 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       cache: "no-store",
       signal: req.signal,
     });
+    if (upstream.status === 416) {
+      return new Response(null, {
+        status: 416,
+        headers: { "content-range": upstream.headers.get("content-range") || "bytes */*" },
+      });
+    }
     if (!upstream.ok || !upstream.body) {
       return NextResponse.json({ error: "Couldn't open that file." }, { status: 502 });
     }

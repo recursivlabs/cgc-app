@@ -19,21 +19,21 @@ interface Row {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const email = String(body.email || "").trim().toLowerCase();
-    const ids = (Array.isArray(body.ids) ? body.ids : [])
-      .map(Number)
-      .filter((n: number) => Number.isInteger(n) && n > 0)
-      .slice(0, 50);
-    if (!email || ids.length === 0) return NextResponse.json({ success: true });
+    // Each entry is an upload id plus the token the browser got back when that
+    // file finished. Without the token nothing is announced.
+    const items = (Array.isArray(body.items) ? body.items : [])
+      .slice(0, 50)
+      .map((i: { id?: unknown; token?: unknown }) => ({ id: Number(i?.id), token: String(i?.token || "") }))
+      .filter((i: { id: number; token: string }) => Number.isInteger(i.id) && i.id > 0 && /^[0-9a-f]{24}$/.test(i.token));
+    if (items.length === 0) return NextResponse.json({ success: true });
 
-    // Only fresh, unannounced uploads from this sender, so this can't be used
-    // to re-send or to email about someone else's files.
     const res = await query(
-      `UPDATE video_uploads SET notified = TRUE
-        WHERE id = ANY($1::int[]) AND email = $2 AND notified = FALSE
-          AND created_at > NOW() - INTERVAL '6 hours'
-        RETURNING id, name, email, filename, size_bytes, note`,
-      [ids, email]
+      `UPDATE video_uploads v SET notified = TRUE, notify_token = NULL
+         FROM unnest($1::int[], $2::text[]) AS t(id, token)
+        WHERE v.id = t.id AND v.notify_token = t.token AND v.notified = FALSE
+          AND v.created_at > NOW() - INTERVAL '6 hours'
+        RETURNING v.id, v.name, v.email, v.filename, v.size_bytes, v.note`,
+      [items.map((i: { id: number }) => i.id), items.map((i: { token: string }) => i.token)]
     );
     const rows = res.rows as Row[];
     if (rows.length === 0) return NextResponse.json({ success: true });
