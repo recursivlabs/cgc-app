@@ -12,6 +12,8 @@ interface Item {
   status: Status;
   progress: number;
   error?: string;
+  /** A passing note while it works, e.g. "Resuming…". */
+  info?: string;
 }
 
 const SAVED = "cgc-ambassador";
@@ -57,59 +59,129 @@ function putPiece(
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Send one file in pieces. A dropped piece is retried from wherever the
- * server says it got to, so a flaky connection slows things down instead of
- * starting over.
- */
-async function sendOne(
-  file: File,
-  who: { name: string; email: string; note: string },
-  extra: Record<string, unknown>,
-  onProgress: (p: number) => void
-): Promise<{ id: number; token: string }> {
-  const start = await fetch("/api/videos/upload", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...who, ...extra, filename: file.name, size: file.size, type: file.type }),
-  });
-  const started = await start.json().catch(() => ({}));
-  if (!start.ok || !started.id) {
-    const final = start.status >= 400 && start.status < 500 && start.status !== 429;
-    throw new UploadError(started.error || "That upload didn't start.", final);
-  }
+/** The session is gone (expired or dropped): start this file again. */
+class Restart extends Error {}
 
+type Who = { name: string; email: string; note: string };
+
+/** Get an upload slot, waiting politely when the network or server is busy. */
+async function startSession(
+  file: File,
+  who: Who,
+  extra: Record<string, unknown>,
+  onInfo: (msg: string) => void
+): Promise<string> {
+  for (let attempt = 0; ; attempt++) {
+    let status = 0;
+    let data: Record<string, unknown> = {};
+    try {
+      const res = await fetch("/api/videos/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...who, ...extra, filename: file.name, size: file.size, type: file.type }),
+      });
+      status = res.status;
+      data = await res.json().catch(() => ({}));
+    } catch {
+      status = 0;
+    }
+    if (status === 200 && typeof data.id === "string") {
+      onInfo("");
+      return data.id;
+    }
+    if (status >= 400 && status < 500 && status !== 429) {
+      throw new UploadError(String(data.error || "That upload didn't start."), true);
+    }
+    // Busy (429/503), a server hiccup or no connection: wait our turn.
+    if (attempt >= 30) throw new UploadError("Couldn't get through. Try again in a few minutes.");
+    onInfo(status === 429 || status === 503 ? "Busy right now. Waiting for a turn…" : "Reconnecting…");
+    await wait(Math.min(30000, 3000 * (attempt + 1)));
+  }
+}
+
+/** Ask the server how far it got. */
+async function whereAreWe(id: string): Promise<number> {
+  const res = await fetch(`/api/videos/upload/${id}`, { cache: "no-store" });
+  if (res.status === 410) throw new Restart();
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok || typeof d.received !== "number") throw new Error("status");
+  return d.received;
+}
+
+/** Send the pieces; after any hiccup, resume from what the server has. */
+async function sendPieces(
+  file: File,
+  id: string,
+  onProgress: (p: number) => void,
+  onInfo: (msg: string) => void
+): Promise<{ id: number; token: string }> {
   let offset = 0;
   let misses = 0;
   while (true) {
     const end = Math.min(offset + CHUNK_BYTES, file.size);
-    let res: { status: number; data: Record<string, unknown> };
+    let res: { status: number; data: Record<string, unknown> } | null = null;
     try {
-      res = await putPiece(`/api/videos/upload/${started.id}?offset=${offset}`, file.slice(offset, end), (loaded) =>
+      res = await putPiece(`/api/videos/upload/${id}?offset=${offset}`, file.slice(offset, end), (loaded) =>
         onProgress(Math.min(1, (offset + loaded) / file.size))
       );
-    } catch (err) {
-      if (++misses > 6) throw err;
-      await wait(1000 * 2 ** Math.min(misses, 4));
-      res = { status: 409, data: {} };
-      // Ask where the server got to by re-sending from our offset; it answers 409 with the truth.
+    } catch {
+      res = null;
     }
-    const d = res.data;
-    if (res.status === 200 && d.done) return { id: Number(d.id), token: String(d.token) };
-    if (res.status === 200 && typeof d.received === "number") {
+    const d = res?.data || {};
+    if (res?.status === 200 && d.done) {
+      onInfo("");
+      return { id: Number(d.id), token: String(d.token) };
+    }
+    if (res?.status === 200 && typeof d.received === "number") {
       offset = d.received;
       misses = 0;
+      onInfo("");
       continue;
     }
-    if (res.status === 409) {
-      if (typeof d.received === "number") offset = d.received;
-      if (++misses > 12) throw new UploadError("That upload kept getting interrupted.");
-      if (!d.received && !Object.keys(d).length) continue;
-      await wait(500);
+    if (res && (res.status === 400 || res.status === 413 || res.status === 415)) {
+      throw new UploadError(String(d.error || "That file can't be taken."), true);
+    }
+    if (res && (res.status === 408 || res.status === 410)) throw new Restart();
+    if (res?.status === 409 && typeof d.received === "number") {
+      offset = d.received;
+      await wait(300);
       continue;
     }
-    const final = res.status === 400 || res.status === 413 || res.status === 415;
-    throw new UploadError(String(d.error || "That upload didn't go through."), final);
+    // Dropped connection, timeout or server hiccup: back off briefly (the
+    // server keeps the upload for 30 s), then resume from its count.
+    if (++misses > 10) throw new UploadError("The connection keeps dropping. Try again on Wi-Fi.");
+    onInfo("Connection dropped. Resuming…");
+    await wait(Math.min(8000, 1000 * misses));
+    try {
+      offset = await whereAreWe(id);
+    } catch (err) {
+      if (err instanceof Restart) throw err;
+    }
+  }
+}
+
+/**
+ * Send one file in pieces, resuming after drops. If the server lost the
+ * upload altogether, start the file again (a few times) without bothering
+ * the person.
+ */
+async function sendOne(
+  file: File,
+  who: Who,
+  extra: Record<string, unknown>,
+  onProgress: (p: number) => void,
+  onInfo: (msg: string) => void
+): Promise<{ id: number; token: string }> {
+  for (let attempt = 0; ; attempt++) {
+    const id = await startSession(file, who, extra, onInfo);
+    try {
+      return await sendPieces(file, id, onProgress, onInfo);
+    } catch (err) {
+      if (!(err instanceof Restart)) throw err;
+      if (attempt >= 3) throw new UploadError("That upload kept getting cut off. Try again on Wi-Fi.");
+      onInfo("Starting this one again…");
+      onProgress(0);
+    }
   }
 }
 
@@ -196,13 +268,14 @@ export default function VideoUpload() {
       if (items[i].status !== "waiting" && items[i].status !== "failed") continue;
       update(i, { status: "sending", progress: 0, error: undefined });
       try {
-        const r = await sendOne(items[i].file, who, extra, (p) => update(i, { progress: p }));
+        const r = await sendOne(items[i].file, who, extra, (p) => update(i, { progress: p }), (m) => update(i, { info: m }));
         sent.push(r);
-        update(i, { status: "done", progress: 1 });
+        update(i, { status: "done", progress: 1, info: "" });
       } catch (err) {
         const final = err instanceof UploadError && err.final;
         update(i, {
           status: final ? "rejected" : "failed",
+          info: "",
           error: err instanceof Error ? err.message : "Failed",
         });
       }
@@ -282,6 +355,9 @@ export default function VideoUpload() {
                 <div className="mt-2 h-1 bg-[var(--line)]">
                   <div className="h-1 bg-[var(--signal)] transition-all" style={{ width: `${it.progress * 100}%` }} />
                 </div>
+              )}
+              {it.info && it.status === "sending" && (
+                <p className="mt-2 text-xs text-[var(--ink-dim)]">{it.info}</p>
               )}
               {it.error && <p className="form-error mt-2">{it.error}</p>}
             </li>

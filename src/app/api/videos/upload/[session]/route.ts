@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
-import { writeChunk } from "@/lib/videos";
+import { uploadStatus, writeChunk } from "@/lib/videos";
 import { randomId } from "@/lib/video-rules";
 
 export const dynamic = "force-dynamic";
+
+// GET /api/videos/upload/:session - how many bytes have arrived, to resume from
+export async function GET(_req: NextRequest, ctx: { params: Promise<{ session: string }> }) {
+  const { session } = await ctx.params;
+  const st = /^[0-9a-f]{24}$/.test(session) ? uploadStatus(session) : null;
+  if (!st) return NextResponse.json({ error: "That upload expired." }, { status: 410 });
+  return NextResponse.json(st);
+}
 
 // PUT /api/videos/upload/:session?offset=N - one piece of the file
 export async function PUT(req: NextRequest, ctx: { params: Promise<{ session: string }> }) {

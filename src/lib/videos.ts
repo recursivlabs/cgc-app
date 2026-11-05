@@ -97,7 +97,8 @@ const IDLE_MS = 30 * 1000;
 const RATE_GRACE_MS = 60 * 1000;
 const MIN_BYTES_PER_SEC = 20 * 1024;
 const MAX_SESSIONS = 40;
-const MAX_SESSIONS_PER_IP = 3;
+/** Campus Wi-Fi puts a whole dorm behind one address. */
+const MAX_SESSIONS_PER_IP = 6;
 
 const sessions = new Map<string, Session>();
 
@@ -126,7 +127,7 @@ export function startUpload(meta: UploadMeta): StartResult {
   }
   const mine = [...sessions.values()].filter((s) => s.meta.ip === meta.ip).length;
   if (mine >= MAX_SESSIONS_PER_IP) {
-    return { error: "Let your other uploads finish first.", status: 429 };
+    return { error: "Lots of uploads from your network right now. Waiting for a turn.", status: 429 };
   }
   const id = randomId(24);
   const s: Session = { meta, received: 0, head: Buffer.alloc(0), busy: false, startedAt: Date.now() };
@@ -182,17 +183,29 @@ function write(pass: PassThrough, buf: Buffer): Promise<void> {
   return new Promise((resolve, reject) => {
     if (pass.destroyed) return reject(new Error("upload closed"));
     if (pass.write(buf)) return resolve();
-    const onDrain = () => {
-      pass.off("error", onErr);
-      resolve();
-    };
-    const onErr = (e: Error) => {
+    // A destroyed stream emits neither drain nor error, only close, so wait
+    // on all three or a dropped upload would hang this request forever.
+    const done = (err?: Error) => {
       pass.off("drain", onDrain);
-      reject(e);
+      pass.off("error", onErr);
+      pass.off("close", onClose);
+      if (err) reject(err);
+      else resolve();
     };
+    const onDrain = () => done();
+    const onErr = (e: Error) => done(e);
+    const onClose = () => done(new Error("upload closed"));
     pass.once("drain", onDrain);
     pass.once("error", onErr);
+    pass.once("close", onClose);
   });
+}
+
+/** Where an upload has got to, so a browser that lost track can resume. */
+export function uploadStatus(id: string): { received: number } | null {
+  const s = sessions.get(id);
+  if (!s || s.failed) return null;
+  return { received: s.received };
 }
 
 export type ChunkResult =
@@ -217,7 +230,11 @@ export async function writeChunk(
     drop(id, "failed");
     return { error: "Storage didn't accept that file. Send it again.", status: 502 };
   }
-  if (s.busy) return { error: "Still receiving the last piece.", status: 409, received: s.received };
+  if (s.busy) {
+    // The browser gave up on the last piece and moved on; stop reading it.
+    s.cancel?.();
+    return { error: "Resume", status: 409, received: s.received };
+  }
   if (offset !== s.received) return { error: "Resume", status: 409, received: s.received };
 
   s.busy = true;

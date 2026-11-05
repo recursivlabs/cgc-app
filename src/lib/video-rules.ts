@@ -11,7 +11,7 @@ export const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024;
  * slow uplink never trips a proxy or server timeout, and a dropped connection
  * resumes from the last piece instead of starting over.
  */
-export const CHUNK_BYTES = 8 * 1024 * 1024;
+export const CHUNK_BYTES = 1024 * 1024;
 
 const EXT_TYPES: Record<string, string> = {
   mp4: "video/mp4",
