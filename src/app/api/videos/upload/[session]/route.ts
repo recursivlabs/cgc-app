@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
-import { uploadStatus, writeChunk } from "@/lib/videos";
+import { finishedResult, rememberFinished, uploadStatus, writeChunk } from "@/lib/videos";
 import { randomId } from "@/lib/video-rules";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +20,8 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ session: st
   if (!/^[0-9a-f]{24}$/.test(session) || !Number.isInteger(offset) || offset < 0 || !req.body) {
     return NextResponse.json({ error: "Bad request." }, { status: 400 });
   }
+  const already = finishedResult(session);
+  if (already) return NextResponse.json({ done: true, ...already });
   try {
     const r = await writeChunk(session, offset, req.body, req.signal);
     if ("error" in r) {
@@ -37,6 +39,7 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ session: st
       [m.name, m.email, m.filename, r.key, r.contentType, m.size, m.note || null, token]
     );
     console.info("video: stored", { id: res.rows[0].id, size: m.size, type: r.contentType });
+    rememberFinished(session, { id: res.rows[0].id, token });
     return NextResponse.json({ done: true, id: res.rows[0].id, token });
   } catch (error) {
     console.error("Video piece error:", error);

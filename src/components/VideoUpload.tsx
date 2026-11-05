@@ -99,11 +99,19 @@ async function startSession(
   }
 }
 
+/** The server already has the whole file; here is its answer. */
+class AlreadyDone extends Error {
+  constructor(public result: { id: number; token: string }) {
+    super("done");
+  }
+}
+
 /** Ask the server how far it got. */
 async function whereAreWe(id: string): Promise<number> {
   const res = await fetch(`/api/videos/upload/${id}`, { cache: "no-store" });
   if (res.status === 410) throw new Restart();
   const d = await res.json().catch(() => ({}));
+  if (res.ok && d.done) throw new AlreadyDone({ id: Number(d.id), token: String(d.token) });
   if (!res.ok || typeof d.received !== "number") throw new Error("status");
   return d.received;
 }
@@ -155,6 +163,7 @@ async function sendPieces(
     try {
       offset = await whereAreWe(id);
     } catch (err) {
+      if (err instanceof AlreadyDone) return err.result;
       if (err instanceof Restart) throw err;
     }
   }

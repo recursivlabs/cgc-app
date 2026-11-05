@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HONEYPOT_FIELD, botReason } from "@/lib/spam";
-import { MAX_VIDEO_BYTES, clientIp, startUpload, uploadRateLimited, videoType } from "@/lib/videos";
+import { MAX_VIDEO_BYTES, cancelUpload, clientIp, startUpload, uploadRateLimited, videoType } from "@/lib/videos";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       elapsedMs: Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       fields: [name, note],
     });
-    if (reason === "too-fast" || (!reason && uploadRateLimited(ip))) {
+    if (reason === "too-fast") {
       return NextResponse.json({ error: "Please wait a moment and send again." }, { status: 429 });
     }
     if (reason) {
@@ -48,6 +48,12 @@ export async function POST(req: NextRequest) {
     const started = startUpload({ name, email, note, filename, size, ip });
     if ("error" in started) {
       return NextResponse.json({ error: started.error }, { status: started.status });
+    }
+    // Only uploads that actually got a slot count toward the hourly limit, so
+    // a dorm waiting its turn doesn't burn its own budget by asking.
+    if (uploadRateLimited(ip)) {
+      cancelUpload(started.id);
+      return NextResponse.json({ error: "Please wait a moment and send again." }, { status: 429 });
     }
     return NextResponse.json({ id: started.id });
   } catch (error) {

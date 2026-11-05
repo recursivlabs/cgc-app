@@ -202,7 +202,35 @@ function write(pass: PassThrough, buf: Buffer): Promise<void> {
 }
 
 /** Where an upload has got to, so a browser that lost track can resume. */
-export function uploadStatus(id: string): { received: number } | null {
+/**
+ * Finished uploads, kept briefly so a browser that lost the last answer can
+ * ask again and get the same result instead of sending the file twice.
+ */
+export interface Finished {
+  id: number;
+  token: string;
+}
+const finished = new Map<string, { result: Finished; at: number }>();
+const FINISHED_MS = 10 * 60 * 1000;
+
+export function rememberFinished(session: string, result: Finished) {
+  const now = Date.now();
+  for (const [k, v] of finished) if (now - v.at > FINISHED_MS) finished.delete(k);
+  finished.set(session, { result, at: now });
+}
+
+export function finishedResult(session: string): Finished | null {
+  const f = finished.get(session);
+  return f && Date.now() - f.at <= FINISHED_MS ? f.result : null;
+}
+
+export function cancelUpload(id: string) {
+  drop(id, "cancelled");
+}
+
+export function uploadStatus(id: string): { received: number } | { done: true; id: number; token: string } | null {
+  const f = finishedResult(id);
+  if (f) return { done: true, ...f };
   const s = sessions.get(id);
   if (!s || s.failed) return null;
   return { received: s.received };
