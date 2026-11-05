@@ -82,12 +82,22 @@ interface Session {
   failed?: Error;
   busy: boolean;
   idle?: NodeJS.Timeout;
+  startedAt: number;
+  /** Stops the piece being read right now, if any. */
+  cancel?: () => void;
 }
 
-/** An upload with no new piece for this long is dropped and its PUT aborted. */
-const IDLE_MS = 2 * 60 * 1000;
-const MAX_SESSIONS = 12;
-const MAX_SESSIONS_PER_IP = 4;
+/**
+ * Slots are scarce, so an upload has to keep moving to keep one. No bytes for
+ * IDLE_MS, or an average below MIN_BYTES_PER_SEC once past the grace period,
+ * and it is dropped. A real phone on a weak connection clears this easily; a
+ * script holding slots open with a byte at a time does not.
+ */
+const IDLE_MS = 30 * 1000;
+const RATE_GRACE_MS = 60 * 1000;
+const MIN_BYTES_PER_SEC = 20 * 1024;
+const MAX_SESSIONS = 40;
+const MAX_SESSIONS_PER_IP = 3;
 
 const sessions = new Map<string, Session>();
 
@@ -98,6 +108,7 @@ function drop(id: string, why: string) {
   if (s.idle) clearTimeout(s.idle);
   s.put?.destroy(new Error(why));
   s.pass?.destroy();
+  s.cancel?.();
 }
 
 function touch(id: string, s: Session) {
@@ -118,7 +129,7 @@ export function startUpload(meta: UploadMeta): StartResult {
     return { error: "Let your other uploads finish first.", status: 429 };
   }
   const id = randomId(24);
-  const s: Session = { meta, received: 0, head: Buffer.alloc(0), busy: false };
+  const s: Session = { meta, received: 0, head: Buffer.alloc(0), busy: false, startedAt: Date.now() };
   sessions.set(id, s);
   touch(id, s);
   return { id };
@@ -216,6 +227,7 @@ export async function writeChunk(
     // rejected read we can catch, never as an uncaught stream error.
     const reader = body.getReader();
     const onAbort = () => reader.cancel().catch(() => {});
+    s.cancel = onAbort;
     signal?.addEventListener("abort", onAbort, { once: true });
     try {
     while (true) {
@@ -246,10 +258,16 @@ export async function writeChunk(
         await write(s.pass, buf);
         s.received += buf.length;
       }
+      const elapsed = Date.now() - s.startedAt;
+      if (elapsed > RATE_GRACE_MS && s.received / (elapsed / 1000) < MIN_BYTES_PER_SEC) {
+        drop(id, "too slow");
+        return { error: "The connection is too slow to finish. Try again on Wi-Fi.", status: 408 };
+      }
       touch(id, s);
     }
     } finally {
       signal?.removeEventListener("abort", onAbort);
+      s.cancel = undefined;
       try { reader.releaseLock(); } catch {}
     }
   } catch (err) {
