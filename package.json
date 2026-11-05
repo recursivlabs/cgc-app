@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --experimental-strip-types --test scripts/spam.test.mjs"
+    "test": "node --experimental-strip-types --test scripts/spam.test.mjs scripts/videos.test.mjs"
   },
   "dependencies": {
     "@recursiv/sdk": "^0.3.1",

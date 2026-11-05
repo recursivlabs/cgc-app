@@ -148,6 +148,23 @@ async function ensureSchema(): Promise<void> {
     WHERE NOT EXISTS (SELECT 1 FROM inquiries WHERE kind = 'host')
   `);
 
+  // Videos ambassadors send in. The file lives in project storage; this row
+  // is how Felisa and the social team find it.
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS video_uploads (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      filename TEXT NOT NULL,
+      storage_key TEXT NOT NULL UNIQUE,
+      content_type TEXT NOT NULL,
+      size_bytes BIGINT NOT NULL,
+      note TEXT,
+      notified BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
   ready = true;
 }
 

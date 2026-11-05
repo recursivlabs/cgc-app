@@ -98,6 +98,12 @@ export default async function AdminPage(props: {
       <h1 className="display text-[clamp(2.2rem,5vw,4rem)]">
         Everything people <span className="text-[var(--signal)]">sent you</span>
       </h1>
+      <Link
+        href="/admin/videos"
+        className="mt-5 inline-block text-xs font-semibold uppercase tracking-widest text-[var(--signal)]"
+      >
+        Ambassador videos →
+      </Link>
 
       <div className="mt-10 grid gap-px border border-[var(--line)] bg-[var(--line)] sm:grid-cols-3">
         {[
