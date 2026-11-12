@@ -78,14 +78,19 @@ export default async function VideosPage() {
       {tally.length > 0 && (
         <div className="mt-10">
           <p className="eyebrow mb-4">
-            This month · goal {MONTHLY_GOAL} videos each
+            This month · goal {MONTHLY_GOAL} videos each · top 3 are Bridge Builders of the Month
           </p>
           <p className="-mt-2 mb-4 text-xs text-[var(--ink-faint)]">
             Counted by the email each person typed in, so check the videos themselves before paying on it.
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {tally.map((t) => (
+            {tally.map((t, i) => (
               <div key={t.email} title={t.email} className="border border-[var(--line)] bg-[var(--panel)] p-5">
+                {i < 3 && t.videos > 0 && (
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-[var(--amber)]">
+                    Bridge Builder of the Month · #{i + 1}
+                  </p>
+                )}
                 <p className="truncate text-[15px] font-semibold">{t.name}</p>
                 <p className="mt-2">
                   <span className={`tally ${t.videos >= MONTHLY_GOAL ? "text-[var(--signal)]" : ""}`}>

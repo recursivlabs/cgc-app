@@ -232,6 +232,79 @@ export function summitSeptember2026Final(r: Recipient): MemberEmail {
 }
 
 /**
+ * November 2026 Summit invitation. Announces the new monthly focus; the
+ * December theme itself is revealed at the summit (Felisa, 2026-11-12).
+ * No sendAt: it waits for someone to press the button.
+ */
+export function summitNovember2026(r: Recipient): MemberEmail {
+  const meet = "https://meetn.com/1776";
+  const title = "Common Bridge Summit: Our New Monthly Focus";
+  // 8:00 to 9:00 pm ET on Nov 19 is 01:00 to 02:00 UTC on Nov 20 (EST).
+  const google = googleCalendarUrl({
+    title,
+    startUtc: "20261120T010000Z",
+    endUtc: "20261120T020000Z",
+    details: `December's theme, and how to take part. Meeting link: ${meet}`,
+    location: meet,
+  });
+  const ics = `${SITE_URL}/api/ics?event=common-bridge-november`;
+
+  const lead = `
+          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">Thursday, November 19 &middot; 8:00 to 9:00 pm ET &middot; online</p>
+          <p style="margin:0 0 24px;font:400 15px/1.6 ${FONT};color:#141417;">Add it to your calendar:
+            <a href="${google}" style="${LINK}">Google</a> &middot;
+            <a href="${ics}" style="${LINK}">Apple, Outlook and others</a>
+          </p>`;
+  const body = `
+          <p style="margin:0 0 16px;">Hi everyone,</p>
+          <p style="margin:0 0 16px;">Our next Common Bridge Summit is Thursday, November 19, at 8:00 pm ET.</p>
+          <p style="margin:0 0 16px;">We are starting something new: a monthly focus. At the summit we will share December's theme and how you can take part. You can start as soon as it is announced.</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f4f0;border-left:3px solid #3aa6f5;">
+            <tr><td style="padding:14px 16px;font:400 15px/1.6 ${FONT};color:#141417;">
+              <strong>When:</strong> Third Thursday of every month. Next one is <strong>November 19</strong>.<br>
+              <strong>Time:</strong> 8:00 to 9:00 pm ET<br>
+              <strong>Where:</strong> Online: <a href="${meet}" style="${LINK}">meetn.com/1776</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 16px;">If you have any questions, just reply to this email. See you there!</p>
+          <p style="margin:0 0 4px;">Best,</p>
+          <p style="margin:0 0 28px;">Felisa<br><a href="mailto:felisa@commongroundcampus.com" style="${LINK}">felisa@commongroundcampus.com</a><br><a href="${SITE_URL}" style="${LINK}">commongroundcampus.com</a></p>`;
+
+  const text = [
+    title,
+    "Thursday, November 19, 8:00 to 9:00 pm ET, online.",
+    `Add to Google Calendar: ${google}`,
+    `Add to Apple, Outlook and others: ${ics}`,
+    "",
+    "Hi everyone,",
+    "",
+    "Our next Common Bridge Summit is Thursday, November 19, at 8:00 pm ET.",
+    "",
+    "We are starting something new: a monthly focus. At the summit we will share December's theme and how you can take part. You can start as soon as it is announced.",
+    "",
+    "When: Third Thursday of every month. Next one is November 19.",
+    "Time: 8:00 to 9:00 pm ET",
+    `Where: Online: ${meet}`,
+    "",
+    "If you have any questions, just reply to this email. See you there!",
+    "",
+    "Best,",
+    "Felisa",
+    "felisa@commongroundcampus.com",
+    "commongroundcampus.com",
+    "",
+    `You are receiving this because you are a Common Bridge member. Unsubscribe with one click: ${r.unsubscribeUrl}`,
+  ].join("\n");
+
+  return {
+    id: "summit-2026-11",
+    subject: "Common Bridge Summit, Nov 19: our new monthly focus",
+    html: shell("Common Bridge", "Our new monthly focus", lead, body, r.unsubscribeUrl),
+    text,
+  };
+}
+
+/**
  * Every member email, newest last. The admin page renders one panel each.
  *
  * `sendAt` is a moment, written with its offset so the hour is unambiguous.
@@ -258,6 +331,7 @@ export const MEMBER_EMAIL_LIST: {
     build: summitSeptember2026Final,
     sendAt: "2026-09-17T19:50:00-04:00",
   },
+  { id: "summit-2026-11", label: "November summit invitation (not sent until someone presses Send)", build: summitNovember2026 },
 ];
 
 export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = Object.fromEntries(
