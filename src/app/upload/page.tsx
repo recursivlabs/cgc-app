@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import VideoUpload from "@/components/VideoUpload";
+import { currentTheme } from "@/lib/themes";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Send your videos",
@@ -8,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function UploadPage() {
+  const theme = currentTheme();
   return (
     <section className="mx-auto max-w-2xl px-5 pb-28 pt-36">
       <p className="eyebrow mb-5">Ambassadors</p>
@@ -17,6 +21,12 @@ export default function UploadPage() {
       <p className="mb-10 mt-5 text-lg leading-relaxed text-[var(--ink-dim)]">
         Videos and photos, straight from your phone or computer. They go to our social team. Unedited is fine.
       </p>
+      {theme && (
+        <p className="-mt-4 mb-10 border-l-2 border-[var(--signal)] pl-4 text-[15px]">
+          <span className="text-[var(--ink-dim)]">This month&apos;s focus: </span>
+          <span className="font-semibold">{theme.title}</span>
+        </p>
+      )}
       <VideoUpload />
     </section>
   );

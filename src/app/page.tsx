@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { EVENTS, HERO_IMAGE, HERO_VIMEO_ID, KIND_LABELS, SCHOOLS } from "@/lib/events";
+import { currentTheme } from "@/lib/themes";
 import { MessagesSquare, HeartHandshake, GraduationCap, Globe } from "lucide-react";
+
+// Re-render hourly so the monthly focus switches on the 1st without a deploy.
+export const revalidate = 3600;
 
 const PROGRAMS = [
   {
@@ -28,6 +32,7 @@ const PROGRAMS = [
 export default function Home() {
   const featured = EVENTS.filter((e) => e.vimeoIds?.length).slice(0, 3);
   const upcoming = EVENTS.filter((e) => e.upcoming);
+  const theme = currentTheme();
 
   return (
     <>
@@ -201,6 +206,12 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-5 py-28">
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
+            {theme && (
+              <div className="mb-10">
+                <p className="eyebrow mb-3">This month&apos;s focus</p>
+                <p className="display text-2xl">{theme.title}</p>
+              </div>
+            )}
             <p className="eyebrow mb-5">What&apos;s next</p>
             {upcoming.length === 0 && (
               <p className="display text-2xl text-[var(--ink-dim)]">

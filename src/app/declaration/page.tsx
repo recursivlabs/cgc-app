@@ -27,6 +27,17 @@ export default function DeclarationPage() {
           Campus was part of it. What came out is a modern reading of the principles in the
           Declaration of Independence, written for the next 250 years.
         </p>
+        <p className="mt-4 max-w-2xl text-[15px] text-[var(--ink-dim)]">
+          More information:{" "}
+          <a
+            href="https://freesocietycoalition.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[var(--signal)] underline-offset-4 hover:underline"
+          >
+            Free Society Coalition
+          </a>
+        </p>
       </section>
 
       <DeclarationQuote />
