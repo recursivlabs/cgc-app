@@ -16,6 +16,56 @@ export interface MemberEmail {
   subject: string;
   html: string;
   text: string;
+  /** Files sent with the email, base64 content (e.g. a calendar invite). */
+  attachments?: { filename: string; content: string; content_type?: string }[];
+}
+
+const icsEscape = (v: string) => v.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+
+/**
+ * A standard meeting invitation (METHOD:REQUEST), like the Spark event emails.
+ * Gmail, Apple Mail and Outlook read the attached file and show their own
+ * Yes / Maybe / No. Replies go to Felisa as the organizer. The UID matches the
+ * site's /api/ics file, so adding it both ways leaves one calendar entry.
+ */
+export function inviteAttachment(opts: {
+  uid: string;
+  title: string;
+  startUtc: string;
+  endUtc: string;
+  description: string;
+  location: string;
+  attendee: string;
+}) {
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Common Ground Campus//Common Bridge//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:REQUEST",
+    "BEGIN:VEVENT",
+    `UID:${opts.uid}`,
+    "SEQUENCE:0",
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${opts.startUtc}`,
+    `DTEND:${opts.endUtc}`,
+    `SUMMARY:${icsEscape(opts.title)}`,
+    `DESCRIPTION:${icsEscape(opts.description)}`,
+    `LOCATION:${icsEscape(opts.location)}`,
+    `URL:${opts.location}`,
+    "ORGANIZER;CN=Felisa Blazek:mailto:felisa@commongroundcampus.com",
+    `ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:${opts.attendee}`,
+    "STATUS:CONFIRMED",
+    "TRANSP:OPAQUE",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n") + "\r\n";
+  return {
+    filename: "invite.ics",
+    content: Buffer.from(ics).toString("base64"),
+    content_type: "text/calendar; method=REQUEST; charset=UTF-8",
+  };
 }
 
 /** What a template needs to know about the person it is going to. */
@@ -325,6 +375,17 @@ export function summitNovember2026(r: Recipient): MemberEmail {
     subject: "Common Bridge Summit, Nov 19: What Is a Bridge Builder?",
     html: shell("Common Bridge", topic, lead, body, r.unsubscribeUrl),
     text,
+    attachments: [
+      inviteAttachment({
+        uid: "common-bridge-november@commongroundcampus.com",
+        title,
+        startUtc: "20261120T010000Z",
+        endUtc: "20261120T020000Z",
+        description: `What it means to build bridges across differences. Join online: ${meet}`,
+        location: meet,
+        attendee: r.email,
+      }),
+    ],
   };
 }
 
@@ -414,6 +475,7 @@ export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<Se
         text: mail.text,
         reply_to: "felisa@commongroundcampus.com",
         category: "marketing",
+        ...(mail.attachments?.length ? { attachments: mail.attachments } : {}),
       }),
       signal: ac.signal,
     });
