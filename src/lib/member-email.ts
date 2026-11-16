@@ -16,6 +16,12 @@ export interface MemberEmail {
   subject: string;
   html: string;
   text: string;
+  /**
+   * "transactional" for a meeting invite members asked for; it needs no
+   * marketing-consent record (the platform's own guidance for invites).
+   * Default "marketing".
+   */
+  category?: "transactional" | "marketing";
   /** Files sent with the email, base64 content (e.g. a calendar invite). */
   attachments?: { filename: string; content: string; content_type?: string }[];
 }
@@ -375,6 +381,7 @@ export function summitNovember2026(r: Recipient): MemberEmail {
     subject: "Common Bridge Summit, Nov 19: What Is a Bridge Builder?",
     html: shell("Common Bridge", topic, lead, body, r.unsubscribeUrl),
     text,
+    category: "transactional",
     attachments: [
       inviteAttachment({
         uid: "common-bridge-november@commongroundcampus.com",
@@ -474,7 +481,7 @@ export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<Se
         html: mail.html,
         text: mail.text,
         reply_to: "felisa@commongroundcampus.com",
-        category: "marketing",
+        category: mail.category ?? "marketing",
         ...(mail.attachments?.length ? { attachments: mail.attachments } : {}),
       }),
       signal: ac.signal,
