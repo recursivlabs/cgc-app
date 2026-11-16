@@ -7,7 +7,7 @@
  */
 
 import { query } from "@/lib/db";
-import { MEMBER_EMAILS, grantConsent, sendMemberEmail } from "@/lib/member-email";
+import { MEMBER_EMAILS, grantConsent, sendMemberEmail, type MemberEmail, type Recipient } from "@/lib/member-email";
 import { SITE_URL } from "@/lib/site";
 
 const CONSENT_SOURCE = "Common Bridge member list provided by Common Ground Campus, 2026-09-03";
@@ -49,9 +49,13 @@ export async function sendToAllMembers(templateId: string): Promise<SendResult> 
   );
   const rows = res.rows as { email: string; unsub_token: string }[];
 
-  for (let i = 0; i < rows.length; i += 50) {
-    const consent = await grantConsent(rows.slice(i, i + 50).map((r) => r.email), CONSENT_SOURCE);
-    if (!consent.ok) return { sent: 0, failed: [], error: consent.error };
+  // A meeting invite goes out as transactional mail and needs no consent
+  // record; the consent endpoint now takes a network-admin key the site lacks.
+  if (!isTransactional(build)) {
+    for (let i = 0; i < rows.length; i += 50) {
+      const consent = await grantConsent(rows.slice(i, i + 50).map((r) => r.email), CONSENT_SOURCE);
+      if (!consent.ok) return { sent: 0, failed: [], error: consent.error };
+    }
   }
 
   let sent = 0;
@@ -79,9 +83,15 @@ export async function sendOne(templateId: string, to: string): Promise<SendResul
   const build = MEMBER_EMAILS[templateId];
   if (!build) return { sent: 0, failed: [], error: "Unknown email." };
 
-  const consent = await grantConsent([to], "Site admin test send");
-  if (!consent.ok) return { sent: 0, failed: [], error: consent.error };
+  if (!isTransactional(build)) {
+    const consent = await grantConsent([to], "Site admin test send");
+    if (!consent.ok) return { sent: 0, failed: [], error: consent.error };
+  }
 
   const out = await sendMemberEmail(to, build({ email: to, unsubscribeUrl: unsubscribeUrl("test") }));
   return out.ok ? { sent: 1, failed: [] } : { sent: 0, failed: [to], error: out.error };
+}
+
+function isTransactional(build: (r: Recipient) => MemberEmail): boolean {
+  return build({ email: "check@example.com", unsubscribeUrl: "" }).category === "transactional";
 }
