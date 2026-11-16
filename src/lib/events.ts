@@ -54,11 +54,11 @@ export const EVENTS: CgcEvent[] = [
   },
   {
     slug: "common-bridge-november",
-    title: "Common Bridge Summit: Our New Monthly Focus",
+    title: "Common Bridge Summit: What Is a Bridge Builder?",
     campus: "Online",
     state: "US",
     kind: "online",
-    topic: "December's theme, and how to take part",
+    topic: "What it means to build bridges across differences",
     blurb:
       "The monthly forum for past and present CGC leaders. Third Thursday of every month. Invitation only. Members can invite others.",
     upcoming: true,
