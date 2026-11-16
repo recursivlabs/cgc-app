@@ -202,6 +202,11 @@ export default function Home() {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <p className="eyebrow mb-5">What&apos;s next</p>
+            {upcoming.length === 0 && (
+              <p className="display text-2xl text-[var(--ink-dim)]">
+                New dates are on the way. #BridgeBuilders hear first.
+              </p>
+            )}
             {upcoming.map((e) => (
               <Link
                 key={e.slug}

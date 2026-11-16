@@ -18,3 +18,15 @@ export function isAdmin(email?: string | null): boolean {
   if (!email) return false;
   return ADMINS.includes(email.trim().toLowerCase());
 }
+
+/**
+ * People who can download ambassador videos but should not read the inbox,
+ * such as whoever edits for social. Admins can always see videos too.
+ */
+const VIDEO_TEAM: string[] = [];
+
+export function canSeeVideos(email?: string | null): boolean {
+  if (!email) return false;
+  const e = email.trim().toLowerCase();
+  return isAdmin(e) || VIDEO_TEAM.includes(e);
+}

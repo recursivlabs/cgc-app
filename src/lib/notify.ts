@@ -35,6 +35,8 @@ export interface NotifyInput {
   replyTo?: string;
   /** Where the "Open the inbox" button points */
   link?: string;
+  /** Button text. Defaults to "Open the inbox". */
+  linkLabel?: string;
 }
 
 function escape(s: string): string {
@@ -45,7 +47,7 @@ function escape(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export function renderEmail({ headline, fields, body, link }: NotifyInput): string {
+export function renderEmail({ headline, fields, body, link, linkLabel }: NotifyInput): string {
   const rows = fields
     .filter(([, v]) => v && String(v).trim())
     .map(
@@ -79,7 +81,7 @@ export function renderEmail({ headline, fields, body, link }: NotifyInput): stri
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}${quote}</table>
         </td></tr>
         <tr><td style="padding:8px 32px 32px;">
-          <a href="${escape(link || SITE + "/admin")}" style="display:inline-block;background:#3aa6f5;color:#141417;text-decoration:none;padding:12px 22px;font:600 14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">Open the inbox</a>
+          <a href="${escape(link || SITE + "/admin")}" style="display:inline-block;background:#3aa6f5;color:#141417;text-decoration:none;padding:12px 22px;font:600 14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">${escape(linkLabel || "Open the inbox")}</a>
           <p style="margin:18px 0 0;font:400 13px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#6e6c68;">Reply to this email to answer them directly.</p>
         </td></tr>
       </table>
@@ -88,13 +90,13 @@ export function renderEmail({ headline, fields, body, link }: NotifyInput): stri
 </body></html>`;
 }
 
-function renderText({ headline, fields, body, link }: NotifyInput): string {
+function renderText({ headline, fields, body, link, linkLabel }: NotifyInput): string {
   const lines = [headline, ""];
   for (const [label, value] of fields) {
     if (value && String(value).trim()) lines.push(`${label}: ${value}`);
   }
   if (body) lines.push("", body);
-  lines.push("", `Open the inbox: ${link || SITE + "/admin"}`);
+  lines.push("", `${linkLabel || "Open the inbox"}: ${link || SITE + "/admin"}`);
   lines.push("Reply to this email to answer them directly.");
   return lines.join("\n");
 }
