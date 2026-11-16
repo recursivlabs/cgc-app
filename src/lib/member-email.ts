@@ -232,6 +232,103 @@ export function summitSeptember2026Final(r: Recipient): MemberEmail {
 }
 
 /**
+ * November 2026 Summit invitation. Announces the new monthly focus; the
+ * December theme itself is revealed at the summit (Felisa, 2026-11-12).
+ * No sendAt: it waits for someone to press the button.
+ */
+export function summitNovember2026(r: Recipient): MemberEmail {
+  const meet = "https://meetn.com/1776";
+  const topic = "What Is a Bridge Builder?";
+  const title = `Common Bridge Summit: ${topic}`;
+  // 8:00 to 9:00 pm ET on Nov 19 is 01:00 to 02:00 UTC on Nov 20 (EST).
+  const google = googleCalendarUrl({
+    title,
+    startUtc: "20261120T010000Z",
+    endUtc: "20261120T020000Z",
+    details: `What it means to build bridges across differences. Meeting link: ${meet}`,
+    location: meet,
+  });
+  const ics = `${SITE_URL}/api/ics?event=common-bridge-november`;
+
+  const intro = [
+    "Thank you to everyone who has joined Common Bridge so far. If you are new, Common Bridge is an invitation-only monthly summit for past and present young leaders from organizations across the country and beyond.",
+    "Common Bridge is an open space for you to gather with others and talk about the life and political topics that matter to you. The conversation is guided by you: no scripts, no rigid agendas, no policy debates. The goal is real dialogue, real relationships, and a place to share ideas.",
+    "Starting this month, each summit also introduces the theme for the month ahead. On this call we will share December's theme, and anyone who wants to can start creating content for it right away.",
+  ];
+  const points: [string, string][] = [
+    ["Topic", topic],
+    ["Theme", "What it means to build bridges across differences"],
+    ["Objective", "Talk through what a Bridge Builder does and how each of us can be one"],
+    ["Coming up", "Persuasive Conversations, Speaking Up Respectfully, and more. Feedback welcome."],
+  ];
+
+  const lead = `
+          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">Thursday, November 19 &middot; 8:00 to 9:00 pm ET &middot; online</p>
+          <p style="margin:0 0 24px;font:400 15px/1.6 ${FONT};color:#141417;">Add it to your calendar:
+            <a href="${google}" style="${LINK}">Google</a> &middot;
+            <a href="${ics}" style="${LINK}">Apple, Outlook and others</a>
+          </p>`;
+  const body = `
+          <p style="margin:0 0 16px;">Hi everyone,</p>
+          ${intro.map((p) => `<p style="margin:0 0 16px;">${p}</p>`).join("\n          ")}
+          <p style="margin:0 0 8px;">This session starts with a broad guiding theme:</p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+            ${points
+              .map(
+                ([k, v]) =>
+                  `<tr><td style="padding:2px 10px 2px 0;vertical-align:top;color:#3aa6f5;">&bull;</td><td style="padding:2px 0;"><strong>${k}:</strong> ${v}</td></tr>`,
+              )
+              .join("\n            ")}
+          </table>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f4f0;border-left:3px solid #3aa6f5;">
+            <tr><td style="padding:14px 16px;font:400 15px/1.6 ${FONT};color:#141417;">
+              <strong>When:</strong> Third Thursday of every month. Next one is <strong>November 19</strong>.<br>
+              <strong>Time:</strong> 8:00 to 9:00 pm ET<br>
+              <strong>Where:</strong> Online: <a href="${meet}" style="${LINK}">meetn.com/1776</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 16px;">You are a Common Bridge member on our site. Sign in with your email to see your member number and your certificate: <a href="${SITE_URL}/member" style="${LINK}">commongroundcampus.com/member</a></p>
+          <p style="margin:0 0 16px;">If you have any questions, just reply to this email. Excited to see you all there!</p>
+          <p style="margin:0 0 4px;">Best,</p>
+          <p style="margin:0 0 28px;">Felisa<br><a href="mailto:felisa@commongroundcampus.com" style="${LINK}">felisa@commongroundcampus.com</a><br><a href="${SITE_URL}" style="${LINK}">commongroundcampus.com</a></p>`;
+
+  const text = [
+    title,
+    "Thursday, November 19, 8:00 to 9:00 pm ET, online.",
+    `Add to Google Calendar: ${google}`,
+    `Add to Apple, Outlook and others: ${ics}`,
+    "",
+    "Hi everyone,",
+    "",
+    ...intro.flatMap((p) => [p, ""]),
+    "This session starts with a broad guiding theme:",
+    ...points.map(([k, v]) => `- ${k}: ${v}`),
+    "",
+    "When: Third Thursday of every month. Next one is November 19.",
+    "Time: 8:00 to 9:00 pm ET",
+    `Where: Online: ${meet}`,
+    "",
+    `You are a Common Bridge member on our site. Sign in with your email to see your member number and your certificate: ${SITE_URL}/member`,
+    "",
+    "If you have any questions, just reply to this email. Excited to see you all there!",
+    "",
+    "Best,",
+    "Felisa",
+    "felisa@commongroundcampus.com",
+    "commongroundcampus.com",
+    "",
+    `You are receiving this because you are a Common Bridge member. Unsubscribe with one click: ${r.unsubscribeUrl}`,
+  ].join("\n");
+
+  return {
+    id: "summit-2026-11",
+    subject: "Common Bridge Summit, Nov 19: What Is a Bridge Builder?",
+    html: shell("Common Bridge", topic, lead, body, r.unsubscribeUrl),
+    text,
+  };
+}
+
+/**
  * Every member email, newest last. The admin page renders one panel each.
  *
  * `sendAt` is a moment, written with its offset so the hour is unambiguous.
@@ -258,6 +355,7 @@ export const MEMBER_EMAIL_LIST: {
     build: summitSeptember2026Final,
     sendAt: "2026-09-17T19:50:00-04:00",
   },
+  { id: "summit-2026-11", label: "November summit invitation (not sent until someone presses Send)", build: summitNovember2026 },
 ];
 
 export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = Object.fromEntries(
