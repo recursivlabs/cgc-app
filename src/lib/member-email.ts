@@ -466,6 +466,11 @@ export async function grantConsent(emails: string[], source: string): Promise<Se
 
 /** Send one member email to one address. Never throws. */
 export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<SendOutcome> {
+  // The platform's send endpoint now refuses this site's key (only an org's own
+  // team may send as it, and this org lives on the Minds network). With a
+  // send-only Resend key for commongroundcampus.com set, mail goes straight out.
+  if (process.env.RESEND_API_KEY) return sendViaResend(to, mail, process.env.RESEND_API_KEY);
+
   const key = process.env.RECURSIV_API_KEY;
   if (!key) return { ok: false, error: "RECURSIV_API_KEY is not set" };
 
@@ -500,6 +505,46 @@ export async function sendMemberEmail(to: string, mail: MemberEmail): Promise<Se
       return { ok: false, error: `held by the platform: ${status}` };
     }
     return { ok: true, status };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+const RESEND_FROM = process.env.MEMBER_EMAIL_FROM || "Common Ground Campus <hello@commongroundcampus.com>";
+
+/** Send one member email through Resend directly. Never throws. */
+async function sendViaResend(to: string, mail: MemberEmail, key: string): Promise<SendOutcome> {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 10000);
+  try {
+    const unsubscribe = mail.html.match(/https:\/\/[^"]*\/unsubscribe\?t=[^"]+/)?.[0];
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+        // One copy per person per email, even if the button is pressed twice.
+        "Idempotency-Key": `${mail.id}:${to}`.slice(0, 256),
+      },
+      body: JSON.stringify({
+        from: RESEND_FROM,
+        to: [to],
+        reply_to: ["felisa@commongroundcampus.com"],
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text,
+        ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>` } } : {}),
+        ...(mail.attachments?.length ? { attachments: mail.attachments } : {}),
+      }),
+      signal: ac.signal,
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      return { ok: false, error: `Resend HTTP ${res.status} ${detail.slice(0, 200)}` };
+    }
+    return { ok: true, status: "sent" };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
   } finally {
