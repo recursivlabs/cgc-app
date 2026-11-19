@@ -397,6 +397,52 @@ export function summitNovember2026(r: Recipient): MemberEmail {
 }
 
 /**
+ * Day-of reminder for the November summit. Same shape as September's: one
+ * line, one button, the link again. No sendAt: someone presses Send.
+ */
+export function summitNovember2026Reminder(r: Recipient): MemberEmail {
+  const meet = "https://meetn.com/1776";
+  const lead = `
+          <p style="margin:0 0 6px;font:600 15px/1.5 ${FONT};color:#141417;">Tonight &middot; 8:00 to 9:00 pm ET &middot; online</p>
+          <p style="margin:0 0 24px;"><a href="${meet}" style="display:inline-block;background:#3aa6f5;color:#141417;text-decoration:none;padding:12px 22px;font:600 14px/1 ${FONT};">Join the Summit</a></p>`;
+  const body = `
+          <p style="margin:0 0 16px;">Hi everyone,</p>
+          <p style="margin:0 0 16px;">A quick reminder that the Common Bridge Summit is tonight at 8:00 pm ET (7:00 pm CT). Tonight's topic is <strong>What Is a Bridge Builder?</strong> We will also share December's theme.</p>
+          <p style="margin:0 0 16px;">Join here: <a href="${meet}" style="${LINK}">meetn.com/1776</a></p>
+          <p style="margin:0 0 16px;">No preparation needed. Bring what is on your mind.</p>
+          <p style="margin:0 0 4px;">See you tonight,</p>
+          <p style="margin:0 0 28px;">Felisa<br><a href="mailto:felisa@commongroundcampus.com" style="${LINK}">felisa@commongroundcampus.com</a><br><a href="${SITE_URL}" style="${LINK}">commongroundcampus.com</a></p>`;
+
+  const text = [
+    "Common Bridge Summit: tonight, 8:00 to 9:00 pm ET (7:00 pm CT), online.",
+    `Join: ${meet}`,
+    "",
+    "Hi everyone,",
+    "",
+    "A quick reminder that the Common Bridge Summit is tonight at 8:00 pm ET (7:00 pm CT). Tonight's topic is What Is a Bridge Builder? We will also share December's theme.",
+    "",
+    `Join here: ${meet}`,
+    "",
+    "No preparation needed. Bring what is on your mind.",
+    "",
+    "See you tonight,",
+    "Felisa",
+    "felisa@commongroundcampus.com",
+    "commongroundcampus.com",
+    "",
+    `You are receiving this because you are a Common Bridge member. Unsubscribe with one click: ${r.unsubscribeUrl}`,
+  ].join("\n");
+
+  return {
+    id: "summit-2026-11-reminder",
+    subject: "Tonight: Common Bridge Summit, 8 pm ET",
+    html: shell("Common Bridge", "Tonight at 8:00 pm ET", lead, body, r.unsubscribeUrl),
+    text,
+    category: "transactional",
+  };
+}
+
+/**
  * Every member email, newest last. The admin page renders one panel each.
  *
  * `sendAt` is a moment, written with its offset so the hour is unambiguous.
@@ -424,6 +470,7 @@ export const MEMBER_EMAIL_LIST: {
     sendAt: "2026-09-17T19:50:00-04:00",
   },
   { id: "summit-2026-11", label: "November summit invitation (not sent until someone presses Send)", build: summitNovember2026 },
+  { id: "summit-2026-11-reminder", label: "November summit reminder, day of (not sent until someone presses Send)", build: summitNovember2026Reminder },
 ];
 
 export const MEMBER_EMAILS: Record<string, (r: Recipient) => MemberEmail> = Object.fromEntries(
